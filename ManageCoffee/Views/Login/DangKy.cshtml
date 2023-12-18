@@ -1,0 +1,38 @@
+﻿﻿@Model ManageCoffee.Models.User
+@{
+    Layout = null;
+
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Login</title>
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <link rel="icon" href="/assets/img/cup-of-drink.png" type="image/x-icon" />
+    <link href="~/assets/css/login.css" rel="stylesheet" />
+    <script src="~/assets/js/login.js"></script>
+</head>
+<body>
+    <div class="login-page">
+        <div class="alert alert-success" role="alert" id="">
+            @TempData["Message"]
+        </div>
+        <div class="form">
+            <form class="login-form" method="post" asp-action="DangKy">
+                <input type="text" placeholder="username" required />
+                <input type="password" placeholder="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Phải chứa ít nhất một số và một chữ cái viết hoa và viết thường và ít nhất 8 ký tự trở lên" required />
+                <input type="text" placeholder="email address"  required/>
+                <select  style="width:270px;height:46px;margin-bottom:30px;">
+                    <option value="Nhân Viên">Nhân Viên</option>
+                    <option value="Chủ Cửa Hàng">Chủ Cửa Hàng</option>
+                    <option value="Admin">Admin</option>
+                </select>
+                <button>Xác Nhận</button>
+                <p class="message">Bạn chưa đăng ký account? <a asp-controller="Login" asp-action="DangNhap">Đăng Nhập</a></p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+

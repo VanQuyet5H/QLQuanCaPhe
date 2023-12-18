@@ -1,0 +1,120 @@
+﻿@Model ManageCoffee.Models.User
+@{
+    ViewData["Title"] = "DanhSachAccount";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div class="content">
+    <div class="card mb-12">
+        <div class="card-header">
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item active">Quản lý thông tin account user</li>
+            </ol>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+
+                    <a class="btn btn-primary" asp-action="DangKy">Tạo Account</a>
+
+                </div>
+
+                <div class="col-md-6 col-xs-12">
+                    <form asp-action="DanhSachAccount" method="get" class="form-inline">
+                        <div class="row">
+                            <div class="col-md-6 col-xs-12">
+
+                                <input type="text" value="@ViewData["CurrentFilter"]" name="filter" class="form-control" placeholder="Tìm kiếm username " />
+
+                            </div>
+                            <div class="col-md-6 col-xs-12">
+
+                                <button type="submit" class="btn btn-primary" value="Search">Tìm</button>
+                                <button type="button" onclick="window.location.href='/Login/DanhSachAccount'" class="btn btn-dark">Hủy</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-head-bg-primary" style="text-align:center;">
+                    <thead class="table-head-bg-primary">
+                        <tr>
+                            <th>
+                                STT
+                            </th>
+                            <th>
+                                Username
+                            </th>
+                            <th>
+                                Password
+                            </th>
+                            <th>
+                                Email
+                            </th>
+                            <th>
+                                Role
+                            </th>
+                            <th>
+                                Thao Tác
+                            </th>
+          
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var accountUser in Model)
+                        {
+                           
+                            <tr>
+                                <td>
+                                    @accountUser.Id
+                                </td>
+                                <td>
+                                    @accountUser.Username
+                                </td>
+                                <td>
+                                    @accountUser.Password
+                                </td>
+                                <td>
+                                    @accountUser.Email
+                                </td>
+                                <td>
+                                    @accountUser.Role
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="CapNhatAccount" asp-route-id="@accountUser.Id" class="btn btn-sm btn-info"><i class="fa fa-pencil fa-fw"></i>Cập Nhật</a>
+                                        <a asp-action="Delete" asp-route-id="@accountUser.Id" class="btn btn-sm btn-danger ml-1"><i class="fa fa-ban fa-fw"></i>Xóa Account</a>
+          
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                    <br />
+                    @{
+                        var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                        var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                    }
+
+                    <a asp-action="DanhSachAccount"
+                       asp-route-pageNumber="@(Model.PageIndex - 1)"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       class="btn  btn-primary @prevDisabled">
+                        Trước
+                    </a>
+                    <a asp-action="DanhSachAccount"
+                       asp-route-pageNumber="@(Model.PageIndex + 1)"
+                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                       class="btn  btn-primary @nextDisabled">
+                        Sau
+                    </a>
+            </div>
+        </div>
+            
+    </div>
+</div>

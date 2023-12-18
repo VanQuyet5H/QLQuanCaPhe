@@ -1,0 +1,10 @@
+﻿@model ManageCoffee.Models.User
+
+<form action="CapNhatAccount" method="post">
+    <input type="hidden" name="id" value="@Model.Id">
+    <input type="text" name="name" value="@Model.Username" placeholder="Tên">
+    <input type="text" name="name" value="@Model.Password" placeholder="Tên">
+    <input type="email" name="email" value="@Model.Email" placeholder="Email">
+    <input type="email" name="email" value="@Model.Role" placeholder="Email">
+    <input type="submit" value="Cập nhật">
+</form>
