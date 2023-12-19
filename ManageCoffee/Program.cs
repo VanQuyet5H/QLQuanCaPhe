@@ -9,6 +9,7 @@ builder.Services.AddDbContext<CoffeeShopContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("conn")));
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddSession(options =>
 {
