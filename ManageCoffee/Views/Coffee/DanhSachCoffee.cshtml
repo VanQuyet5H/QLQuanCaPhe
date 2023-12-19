@@ -1,5 +1,4 @@
-﻿
-﻿@Model ManageCoffee.Models.Coffee
+﻿﻿@Model ManageCoffee.Models.Coffee
 @{
     ViewData["Title"] = "DanhSachCoffee";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -20,7 +19,7 @@
                         <div class="row">
                             <div class="col-md-6 col-xs-12">
 
-                                    <input type="text" value="@ViewData["CurrentFilter"]" name="filter" class="form-control" placeholder="Tìm kiếm tên coffee " />
+                                <input type="text" value="@ViewData["CurrentFilter"]" name="filter" class="form-control" placeholder="Tìm kiếm tên coffee " />
 
                             </div>
                             <div class="col-md-6 col-xs-12">
@@ -34,37 +33,49 @@
                 </div>
             </div>
         </div>
-    <div class="card-body">
-    @foreach (var coffee in Model)
-    {
-        <div class="card" style="width: 18rem;">
-            <img src="@coffee.Image" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Tên:@coffee.Name</h5>
-                <p class="card-text">Loại:@coffee.Type</p>
-                <p class="card-text">Giá:@coffee.Price</p>
-                <a asp-controller="Order" asp-action="CustomerOrder" class="btn btn-primary">Buy Coffee</a>
-            </div>
-        </div>
-    }
-                <br />
-                @{
-                    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-                    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+        <div class="container">
+            <div class="row" style="align-content:center">
+                @foreach (var item in Model)
+                {
+                    <div class=" col-sm-3" style="border: 1px solid #ffb2b2; border-radius: 10px; margin: 15px;">
+                        <div class="box_main">
+                            <h4 class="shirt_text">@item.Name</h4>
+                            <p class="price_text">Mô tả:  <span style="color: #262626;"> @item.Description</span></p>
+                            <p class="price_text"><span class="text-muted">@(item.Price.ToString("n0")) VND</span>    </p>
+                            <div class="electronic_img" style="margin-left:-11px">
+                                <a href="#">
+                                    <img src="@item.Image" class="image_1" style="border-radius: 10px; width: 150px; height: 150px;">
+                                </a>
+                            </div>
+                            <div class="btn_main">
+                                <div class="seemore_bt" style="margin-bottom:20px;margin-top:10px">
+                                    <a asp-route="addcart"
+                                       asp-route-productid="@item.Id"
+                                       class="btn btn-secondary btn-sm float-right">Đặt hàng</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 }
+            </div>
+            <br />
+            @{
+                var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+            }
 
-                <a asp-action="DanhSachCoffee"
-                   asp-route-pageNumber="@(Model.PageIndex - 1)"
-                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                   class="btn  btn-primary @prevDisabled">
-                    Trước
-                </a>
-                <a asp-action="DanhSachCoffee"
-                   asp-route-pageNumber="@(Model.PageIndex + 1)"
-                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                   class="btn  btn-primary @nextDisabled">
-                    Sau
-                </a>
-    </div>   
+            <a asp-action="DanhSachCoffee"
+               asp-route-pageNumber="@(Model.PageIndex - 1)"
+               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+               class="btn  btn-primary @prevDisabled">
+                Trước
+            </a>
+            <a asp-action="DanhSachCoffee"
+               asp-route-pageNumber="@(Model.PageIndex + 1)"
+               asp-route-currentFilter="@ViewData["CurrentFilter"]"
+               class="btn  btn-primary @nextDisabled">
+                Sau
+            </a>
+        </div>
     </div>
 </div>

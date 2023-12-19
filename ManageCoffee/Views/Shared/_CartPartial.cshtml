@@ -1,0 +1,14 @@
+﻿@using ManageCoffee.ViewModels
+@using Microsoft.AspNetCore.Http
+@using Newtonsoft.Json
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var session = HttpContextAccessor.HttpContext.Session;
+    string jsoncart = session.GetString(ManageCoffee.Controllers.OrderController.CARTKEY);
+    if (jsoncart != null)
+    {
+        var cart = JsonConvert.DeserializeObject<List<CartItem>>(jsoncart);
+        <a style="color: dodgerblue;" asp-route="cart">* Giỏ hàng(@cart.Count)</a>
+    }
+}

@@ -1,8 +1,11 @@
 ﻿using ManageCoffee.Models;
 using ManageCoffee.Other;
+using ManageCoffee.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using System.Globalization;
 using System.Linq;
 
 namespace ManageCoffee.Controllers
@@ -16,7 +19,7 @@ namespace ManageCoffee.Controllers
             _context = context;
 
         }
-        //Hiển thị danh sách coffee
+
         [HttpGet]
         public async Task<IActionResult> DanhSachCoffee(string searchString, string currentFilter, int? pageNumber)
         {
@@ -36,7 +39,7 @@ namespace ManageCoffee.Controllers
             {
                 sqlServerDbContext = sqlServerDbContext.Where(s => s.Name.Contains(searchString));
             }
-           
+
             int pageSize = 3;
             return View(await PaginatedList<Coffee>.CreateAsync(sqlServerDbContext.AsNoTracking(), pageNumber ?? 1, pageSize));
 
@@ -47,14 +50,15 @@ namespace ManageCoffee.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult ThemCoffee([FromBody]Coffee coffee)
+        public IActionResult ThemCoffee([FromBody] Coffee coffee)
         {
             if (ModelState.IsValid)
             {
                 _context.Coffee.Add(coffee);
                 _context.SaveChanges();
             }
-            return RedirectToAction("DanhSachCoffee","Coffee");
+            return RedirectToAction("DanhSachCoffee", "Coffee");
         }
+       
     }
 }
