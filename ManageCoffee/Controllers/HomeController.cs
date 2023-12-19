@@ -8,7 +8,7 @@ namespace ManageCoffee.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHttpContextAccessor accessor)
         {
             _logger = logger;
         }
