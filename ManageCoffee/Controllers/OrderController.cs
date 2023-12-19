@@ -1,4 +1,5 @@
-﻿using ManageCoffee.Models;
+﻿using AutoMapper;
+using ManageCoffee.Models;
 using ManageCoffee.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -11,11 +12,12 @@ namespace ManageCoffee.Controllers
     {
         private readonly CoffeeShopContext _context;
         public const string CARTKEY = "cart";
+        protected readonly IMapper _mapper;
 
-        public OrderController(CoffeeShopContext context)
+        public OrderController(CoffeeShopContext context, IMapper mapper)
         {
             _context = context;
-
+            _mapper = mapper;
         }
         public IActionResult Index()
         {
@@ -105,19 +107,32 @@ namespace ManageCoffee.Controllers
         }
 
         [Route("/checkout")]
-        public IActionResult Checkout()
+        public IActionResult Checkout(Order orders)
         {
+            var cart = GetCartItems();           
+            var cartItems = cart.ToList();
 
-            var order = new Order
-            {                 
-                OrderDate = DateTime.Now,
-                Status = "Pending", 
-            };
+            foreach (var cartItem in cartItems)
+            {
+                var orderDetail = new Order
+                {
+                    CoffeeId = cartItem.Coffee.Id,
+                    CustomerId = 1,
+                    OrderDate = DateTime.Now,
+                    Status = "Pending",
+                };
+                var orderCart = _mapper.Map<Order>(orderDetail);
+                _context.Order.Add(orderCart);
+            }
 
-            _context.Order.Add(order);
-            _context.SaveChanges();          
+            _context.SaveChanges();
+            ClearCart();
 
-            return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
+            return RedirectToAction("ThankYou", new { cartItems });
+        }
+        public ActionResult ThankYou(List<CartItem> cartItems)
+        {
+            return View(cartItems);
         }
 
     }
