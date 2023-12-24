@@ -506,50 +506,50 @@
 	<script src="/assets/js/setting-demo.js"></script>
 	<script src="/assets/js/demo.js"></script>
 	<script>
-		Circles.create({
-			id:'circles-1',
-			radius:45,
-			value:60,
-			maxValue:100,
-			width:7,
-			text: 5,
-			colors:['#f1f1f1', '#FF9E27'],
-			duration:400,
-			wrpClass:'circles-wrp',
-			textClass:'circles-text',
-			styleWrapper:true,
-			styleText:true
-		})
+		// Circles.create({
+		// 	id: 'circles-1',
+		// 	radius: 45,
+		// 	value: 60,
+		// 	maxValue: 100,
+		// 	width: 7,
+		// 	text: 8,
+		// 	colors: ['#f1f1f1', '#FF9E27'],
+		// 	duration: 400,
+		// 	wrpClass: 'circles-wrp',
+		// 	textClass: 'circles-text',
+		// 	styleWrapper: true,
+		// 	styleText: true
+		// })
 
-		Circles.create({
-			id:'circles-2',
-			radius:45,
-			value:70,
-			maxValue:100,
-			width:7,
-			text: 36,
-			colors:['#f1f1f1', '#2BB930'],
-			duration:400,
-			wrpClass:'circles-wrp',
-			textClass:'circles-text',
-			styleWrapper:true,
-			styleText:true
-		})
+		// Circles.create({
+		// 	id: 'circles-2',
+		// 	radius: 45,
+		// 	value: 70,
+		// 	maxValue: 100,
+		// 	width: 7,
+		// 	text: 7,
+		// 	colors: ['#f1f1f1', '#2BB930'],
+		// 	duration: 400,
+		// 	wrpClass: 'circles-wrp',
+		// 	textClass: 'circles-text',
+		// 	styleWrapper: true,
+		// 	styleText: true
+		// })
 
-		Circles.create({
-			id:'circles-3',
-			radius:45,
-			value:40,
-			maxValue:100,
-			width:7,
-			text: 12,
-			colors:['#f1f1f1', '#F25961'],
-			duration:400,
-			wrpClass:'circles-wrp',
-			textClass:'circles-text',
-			styleWrapper:true,
-			styleText:true
-		})
+		// Circles.create({
+		// 	id: 'circles-3',
+		// 	radius: 45,
+		// 	value: 40,
+		// 	maxValue: 100,
+		// 	width: 7,
+		// 	text: 6,
+		// 	colors: ['#f1f1f1', '#F25961'],
+		// 	duration: 400,
+		// 	wrpClass: 'circles-wrp',
+		// 	textClass: 'circles-text',
+		// 	styleWrapper: true,
+		// 	styleText: true
+		// })
 
 		var totalIncomeChart = document.getElementById('totalIncomeChart').getContext('2d');
 
@@ -557,7 +557,7 @@
 			type: 'bar',
 			data: {
 				labels: ["S", "M", "T", "W", "T", "F", "S", "S", "M", "T"],
-				datasets : [{
+				datasets: [{
 					label: "Total Income",
 					backgroundColor: '#ff9e27',
 					borderColor: 'rgb(23, 125, 255)',
@@ -575,22 +575,22 @@
 						ticks: {
 							display: false //this will remove only the label
 						},
-						gridLines : {
+						gridLines: {
 							drawBorder: false,
-							display : false
+							display: false
 						}
 					}],
-					xAxes : [ {
-						gridLines : {
+					xAxes: [{
+						gridLines: {
 							drawBorder: false,
-							display : false
+							display: false
 						}
 					}]
 				},
 			}
 		});
 
-		$('#lineChart').sparkline([105,103,123,100,95,105,115], {
+		$('#lineChart').sparkline([105, 103, 123, 100, 95, 105, 115], {
 			type: 'line',
 			height: '70',
 			width: '100%',
@@ -599,6 +599,7 @@
 			fillColor: 'rgba(255, 165, 52, .14)'
 		});
 	</script>
+	@await Component.InvokeAsync("Notyf")
 	@RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

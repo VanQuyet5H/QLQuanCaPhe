@@ -1,3 +1,4 @@
+using AspNetCoreHero.ToastNotification;
 using ManageCoffee.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<CoffeeShopContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("conn")));
 builder.Services.AddDistributedMemoryCache();
-
+builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopCenter; });
 builder.Services.AddSession(options =>
 {
 	options.IdleTimeout = TimeSpan.FromSeconds(1800);
@@ -34,5 +35,5 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Coffee}/{action=ThemCoffee}/{id?}");
 app.Run();

@@ -1,5 +1,9 @@
 ﻿using ManageCoffee.Models;
+using ManageCoffee.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ManageCoffee.Controllers
 {
@@ -12,9 +16,30 @@ namespace ManageCoffee.Controllers
             _context = context;
 
         }
-        public IActionResult Index()
+        //Thông kê coffee đã bán theo khoảng thời gian
+        public IActionResult ThongKe(Tg tg)
         {
-            return View();
+            var ds = from a in _context.Order
+                     join b in _context.OrderItem on a.Id equals b.Order.Id
+                     join c in _context.Coffee on a.Coffee.Id equals c.Id
+                     join d in _context.Customer on a.Customer.Id equals d.Id
+                     where a.OrderDate<=tg.DenNgay && a.OrderDate>=tg.TuNgay  
+                     select new
+                     {
+						
+					 };
+
+
+
+
+			return View();
         }
-    }
+		public IActionResult XuatExcel()
+		{
+			return View();
+		}
+
+
+
+	}
 }
