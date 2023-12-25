@@ -1,5 +1,5 @@
-﻿﻿@Model ManageCoffee.Models.User
-@{
+﻿@model ManageCoffee.Models.User
+﻿@{
     Layout = null;
 
 }
@@ -15,15 +15,12 @@
 </head>
 <body>
     <div class="login-page">
-        <div class="alert alert-success" role="alert" id="">
-            @TempData["Message"]
-        </div>
         <div class="form">
             <form class="login-form" method="post" asp-action="DangKy">
-                <input type="text" placeholder="username" required />
-                <input type="password" placeholder="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Phải chứa ít nhất một số và một chữ cái viết hoa và viết thường và ít nhất 8 ký tự trở lên" required />
-                <input type="text" placeholder="email address"  required/>
-                <select  style="width:270px;height:46px;margin-bottom:30px;">
+                <input type="text" asp-for="Username" placeholder="username" required />
+                <input type="password" asp-for="Password" placeholder="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Phải chứa ít nhất một số và một chữ cái viết hoa và viết thường và ít nhất 8 ký tự trở lên" required />
+                <input type="text" asp-for="Email" placeholder="email address" required />
+                <select asp-for="Role" style="width:270px;height:46px;margin-bottom:30px;">
                     <option value="Nhân Viên">Nhân Viên</option>
                     <option value="Chủ Cửa Hàng">Chủ Cửa Hàng</option>
                     <option value="Admin">Admin</option>

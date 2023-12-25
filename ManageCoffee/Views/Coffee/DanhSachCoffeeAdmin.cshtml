@@ -1,6 +1,6 @@
-﻿@Model ManageCoffee.Models.User
+﻿﻿@Model ManageCoffee.Models.Coffee
 @{
-    ViewData["Title"] = "DanhSachAccount";
+    ViewData["Title"] = "DanhSachCoffee";
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
@@ -9,27 +9,27 @@
         <div class="card-header">
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-                <li class="breadcrumb-item active">Quản lý thông tin account user</li>
+                <li class="breadcrumb-item active">Danh sách coffee</li>
             </ol>
             <div class="row">
                 <div class="col-md-6 col-xs-12">
 
-                    <a class="btn btn-primary" asp-action="DangKy">Tạo Account</a>
+                    <a class="btn btn-primary" asp-action="ThemCoffee">Thêm Sản Phẩm</a>
+
 
                 </div>
-
                 <div class="col-md-6 col-xs-12">
-                    <form asp-action="DanhSachAccount" method="get" class="form-inline">
+                    <form asp-action="DanhSachCoffee" method="get" class="form-inline">
                         <div class="row">
                             <div class="col-md-6 col-xs-12">
 
-                                <input type="text" value="@ViewData["CurrentFilter"]" name="filter" class="form-control" placeholder="Tìm kiếm username " />
+                                <input type="text" value="@ViewData["CurrentFilter"]" name="filter" class="form-control" placeholder="Tìm kiếm tên coffee " />
 
                             </div>
                             <div class="col-md-6 col-xs-12">
 
                                 <button type="submit" class="btn btn-primary" value="Search">Tìm</button>
-                                <button type="button" onclick="window.location.href='/Login/DanhSachAccount'" class="btn btn-dark">Hủy</button>
+                                <button type="button" onclick="window.location.href='/Coffee/DanhSachCoffee'" class="btn btn-dark">Hủy</button>
                             </div>
                         </div>
 
@@ -37,7 +37,6 @@
                 </div>
             </div>
         </div>
-
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover table-striped table-head-bg-primary" style="text-align:center;">
@@ -47,16 +46,25 @@
                                 STT
                             </th>
                             <th>
-                                Username
+                                Tên Coffee
                             </th>
                             <th>
-                                Password
+                                Mô Tả
                             </th>
                             <th>
-                                Email
+                                Loại
                             </th>
                             <th>
-                                Role
+                                Hình Ảnh
+                            </th>
+                            <th>
+                                Giá
+                            </th>
+                            <th>
+                                Số Lượng
+                            </th>
+                            <th>
+                                Trạng Thái
                             </th>
                             <th>
                                 Thao Tác
@@ -65,29 +73,38 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var accountUser in Model)
+                        @foreach (var item in Model)
                         {
 
                             <tr>
                                 <td>
-                                    @accountUser.Id
+                                    @item.Id
                                 </td>
                                 <td>
-                                    @accountUser.Username
+                                    @item.Name
                                 </td>
                                 <td>
-                                    @accountUser.Password
+                                    @item.Description
                                 </td>
                                 <td>
-                                    @accountUser.Email
+                                    @item.Type
                                 </td>
                                 <td>
-                                    @accountUser.Role
+                                    @item.Image
+                                </td>
+                                <td>
+                                    @item.Price
+                                </td>
+                                <td>
+                                    @item.Quantity
+                                </td>
+                                <td>
+                                    @item.InStock
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a asp-action="CapNhatAccount" asp-route-id="@accountUser.Id" class="btn btn-sm btn-info"><i class="fa fa-pencil fa-fw"></i>Cập Nhật</a>
-                                        <a asp-action="Delete" asp-route-id="@accountUser.Id" class="btn btn-sm btn-danger ml-1"><i class="fa fa-ban fa-fw"></i>Xóa Account</a>
+                                        <a asp-action="CapNhatCoffee" asp-route-id="@item.Id" class="btn btn-sm btn-info"><i class="fa fa-pencil fa-fw"></i>Cập Nhật</a>
+                                        <a asp-action="DeleteConfirmed" asp-route-id="@item.Id" class="btn btn-sm btn-danger ml-1"><i class="fa fa-ban fa-fw"></i>Xóa</a>
 
                                     </div>
                                 </td>
@@ -114,7 +131,27 @@
                     Sau
                 </a>
             </div>
+            <div class="modal fade" id="CancelDontu" tabindex="-1" role="dialog" aria-labelledby="exaple">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form method="post">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="#exaple">Xóa sản phẩm</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-body">
+                        <h2>bạn có chắc muốn xóa sản phẩm này</h2>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
         </div>
-
     </div>
 </div>
+
+

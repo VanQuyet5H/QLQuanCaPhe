@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+	ViewData["Title"] = "Home Page";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -13,7 +13,7 @@
 				</div>
 				<div class="ml-md-auto py-2 py-md-0">
 					<a href="#" class="btn btn-white btn-border btn-round mr-2">5 P. Đinh Tiên Hoàng, Hoàn Kiếm, Hà Nội	</a>
-					
+
 				</div>
 			</div>
 		</div>
@@ -27,16 +27,22 @@
 						<div class="card-category">Daily information about statistics in system</div>
 						<div class="d-flex flex-wrap justify-content-around pb-2 pt-4">
 							<div class="px-2 pb-2 pb-md-0 text-center">
-								<div id="circles-1"></div>
-								<h6 class="fw-bold mt-3 mb-0">New Users</h6>
+								<div id="circles-1">
+									<div class="circles-wrp" style="position: relative; display: inline-block;">
+										<svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"><path fill="transparent" stroke="#f1f1f1" stroke-width="7" d="M 44.99154756204665 3.500000860767564 A 41.5 41.5 0 1 1 44.942357332570026 3.500040032273624 Z" class="circles-maxValueStroke"></path><path fill="transparent" stroke="#FF9E27" stroke-width="7" d="M 44.99154756204665 3.500000860767564 A 41.5 41.5 0 1 1 20.64435763625984 78.60137921350231 " class="circles-valueStroke"></path></svg><div class="circles-text" style="position: absolute; top: 0px; left: 0px; text-align: center; width: 100%; font-size: 31.5px; height: 90px; line-height: 90px;">
+											@ViewData["CountCustomer"]
+										</div>
+									</div>
+								</div>
+								<h6 class="fw-bold mt-3 mb-0">Customer Number</h6>
 							</div>
 							<div class="px-2 pb-2 pb-md-0 text-center">
-								<div id="circles-2"></div>
-								<h6 class="fw-bold mt-3 mb-0">Sales</h6>
+								<div id="circles-2"><div class="circles-wrp" style="position: relative; display: inline-block;"><svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"><path fill="transparent" stroke="#f1f1f1" stroke-width="7" d="M 44.99154756204665 3.500000860767564 A 41.5 41.5 0 1 1 44.942357332570026 3.500040032273624 Z" class="circles-maxValueStroke"></path><path fill="transparent" stroke="#2BB930" stroke-width="7" d="M 44.99154756204665 3.500000860767564 A 41.5 41.5 0 1 1 5.5495771787290025 57.88076625138973 " class="circles-valueStroke"></path></svg><div class="circles-text" style="position: absolute; top: 0px; left: 0px; text-align: center; width: 100%; font-size: 31.5px; height: 90px; line-height: 90px;">@ViewData["CountOrder"]</div></div></div>
+								<h6 class="fw-bold mt-3 mb-0">Order Number</h6>
 							</div>
 							<div class="px-2 pb-2 pb-md-0 text-center">
-								<div id="circles-3"></div>
-								<h6 class="fw-bold mt-3 mb-0">Subscribers</h6>
+								<div id="circles-3"><div class="circles-wrp" style="position: relative; display: inline-block;"><svg xmlns="http://www.w3.org/2000/svg" width="90" height="90"><path fill="transparent" stroke="#f1f1f1" stroke-width="7" d="M 44.99154756204665 3.500000860767564 A 41.5 41.5 0 1 1 44.942357332570026 3.500040032273624 Z" class="circles-maxValueStroke"></path><path fill="transparent" stroke="#F25961" stroke-width="7" d="M 44.99154756204665 3.500000860767564 A 41.5 41.5 0 0 1 69.44267714510887 78.53812060894248 " class="circles-valueStroke"></path></svg><div class="circles-text" style="position: absolute; top: 0px; left: 0px; text-align: center; width: 100%; font-size: 31.5px; height: 90px; line-height: 90px;">@ViewData["SoSp"]</div></div></div>
+								<h6 class="fw-bold mt-3 mb-0">Number of coffee sold</h6>
 							</div>
 						</div>
 					</div>
@@ -50,7 +56,7 @@
 							<div class="col-md-4 d-flex flex-column justify-content-around">
 								<div>
 									<h6 class="fw-bold text-uppercase text-success op-8">Total Income</h6>
-									<h3 class="fw-bold">$9.782</h3>
+									<h3 class="fw-bold">@ViewData["DoanhThu"]</h3>
 								</div>
 								<div>
 									<h6 class="fw-bold text-uppercase text-danger op-8">Total Spend</h6>
@@ -389,131 +395,6 @@
 							<li class="d-flex justify-content-between pb-1 pt-1"><small>/product/readypro/index.html</small> <span>7</span></li>
 							<li class="d-flex justify-content-between pb-1 pt-1"><small>/product/atlantis/demo.html</small> <span>10</span></li>
 						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-6">
-				<div class="card full-height">
-					<div class="card-header">
-						<div class="card-title">Feed Activity</div>
-					</div>
-					<div class="card-body">
-						<ol class="activity-feed">
-							<li class="feed-item feed-item-secondary">
-								<time class="date" datetime="9-25">Sep 25</time>
-								<span class="text">Responded to need <a href="#">"Volunteer opportunity"</a></span>
-							</li>
-							<li class="feed-item feed-item-success">
-								<time class="date" datetime="9-24">Sep 24</time>
-								<span class="text">Added an interest <a href="#">"Volunteer Activities"</a></span>
-							</li>
-							<li class="feed-item feed-item-info">
-								<time class="date" datetime="9-23">Sep 23</time>
-								<span class="text">Joined the group <a href="single-group.php">"Boardsmanship Forum"</a></span>
-							</li>
-							<li class="feed-item feed-item-warning">
-								<time class="date" datetime="9-21">Sep 21</time>
-								<span class="text">Responded to need <a href="#">"In-Kind Opportunity"</a></span>
-							</li>
-							<li class="feed-item feed-item-danger">
-								<time class="date" datetime="9-18">Sep 18</time>
-								<span class="text">Created need <a href="#">"Volunteer Opportunity"</a></span>
-							</li>
-							<li class="feed-item">
-								<time class="date" datetime="9-17">Sep 17</time>
-								<span class="text">Attending the event <a href="single-event.php">"Some New Event"</a></span>
-							</li>
-						</ol>
-					</div>
-				</div>
-			</div>
-			<div class="col-md-6">
-				<div class="card full-height">
-					<div class="card-header">
-						<div class="card-head-row">
-							<div class="card-title">Support Tickets</div>
-							<div class="card-tools">
-								<ul class="nav nav-pills nav-secondary nav-pills-no-bd nav-sm" id="pills-tab" role="tablist">
-									<li class="nav-item">
-										<a class="nav-link" id="pills-today" data-toggle="pill" href="#pills-today" role="tab" aria-selected="true">Today</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link active" id="pills-week" data-toggle="pill" href="#pills-week" role="tab" aria-selected="false">Week</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" id="pills-month" data-toggle="pill" href="#pills-month" role="tab" aria-selected="false">Month</a>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-					<div class="card-body">
-						<div class="d-flex">
-							<div class="avatar avatar-online">
-								<span class="avatar-title rounded-circle border border-white bg-info">J</span>
-							</div>
-							<div class="flex-1 ml-3 pt-1">
-								<h6 class="text-uppercase fw-bold mb-1">Joko Subianto <span class="text-warning pl-3">pending</span></h6>
-								<span class="text-muted">I am facing some trouble with my viewport. When i start my</span>
-							</div>
-							<div class="float-right pt-1">
-								<small class="text-muted">8:40 PM</small>
-							</div>
-						</div>
-						<div class="separator-dashed"></div>
-						<div class="d-flex">
-							<div class="avatar avatar-offline">
-								<span class="avatar-title rounded-circle border border-white bg-secondary">P</span>
-							</div>
-							<div class="flex-1 ml-3 pt-1">
-								<h6 class="text-uppercase fw-bold mb-1">Prabowo Widodo <span class="text-success pl-3">open</span></h6>
-								<span class="text-muted">I have some query regarding the license issue.</span>
-							</div>
-							<div class="float-right pt-1">
-								<small class="text-muted">1 Day Ago</small>
-							</div>
-						</div>
-						<div class="separator-dashed"></div>
-						<div class="d-flex">
-							<div class="avatar avatar-away">
-								<span class="avatar-title rounded-circle border border-white bg-danger">L</span>
-							</div>
-							<div class="flex-1 ml-3 pt-1">
-								<h6 class="text-uppercase fw-bold mb-1">Lee Chong Wei <span class="text-muted pl-3">closed</span></h6>
-								<span class="text-muted">Is there any update plan for RTL version near future?</span>
-							</div>
-							<div class="float-right pt-1">
-								<small class="text-muted">2 Days Ago</small>
-							</div>
-						</div>
-						<div class="separator-dashed"></div>
-						<div class="d-flex">
-							<div class="avatar avatar-offline">
-								<span class="avatar-title rounded-circle border border-white bg-secondary">P</span>
-							</div>
-							<div class="flex-1 ml-3 pt-1">
-								<h6 class="text-uppercase fw-bold mb-1">Peter Parker <span class="text-success pl-3">open</span></h6>
-								<span class="text-muted">I have some query regarding the license issue.</span>
-							</div>
-							<div class="float-right pt-1">
-								<small class="text-muted">2 Day Ago</small>
-							</div>
-						</div>
-						<div class="separator-dashed"></div>
-						<div class="d-flex">
-							<div class="avatar avatar-away">
-								<span class="avatar-title rounded-circle border border-white bg-danger">L</span>
-							</div>
-							<div class="flex-1 ml-3 pt-1">
-								<h6 class="text-uppercase fw-bold mb-1">Logan Paul <span class="text-muted pl-3">closed</span></h6>
-								<span class="text-muted">Is there any update plan for RTL version near future?</span>
-							</div>
-							<div class="float-right pt-1">
-								<small class="text-muted">2 Days Ago</small>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>
