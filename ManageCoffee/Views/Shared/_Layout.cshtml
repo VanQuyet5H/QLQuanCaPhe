@@ -361,10 +361,7 @@
 
 							</a>
 						</li>
-							
-
-						
-					
+																	
 					</ul>
 				</div>
 			</div>
@@ -511,7 +508,6 @@
 	<script src="/assets/js/demo.js"></script>
 	<script>
 
-
 		var totalIncomeChart = document.getElementById('totalIncomeChart').getContext('2d');
 
 		var mytotalIncomeChart = new Chart(totalIncomeChart, {
@@ -560,6 +556,7 @@
 			fillColor: 'rgba(255, 165, 52, .14)'
 		});
 	</script>
-	@RenderSectionAsync("Scripts", required: false)
+	@await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
