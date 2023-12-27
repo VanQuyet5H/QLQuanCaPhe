@@ -41,10 +41,13 @@
                         <div class="box_main">
                             <img src="@coffee.Image" class="card-img-top" alt="...">
                             <div class="card-body">
-                                <h5 class="card-title">Tên:@coffee.Name</h5>
-                                <p class="card-text">Loại:@coffee.Type</p>
-                                <p class="card-text">Giá:@coffee.Price</p>
-                                <a asp-controller="Order" asp-action="CustomerOrder" class="btn btn-primary">Buy Coffee</a>
+                                <h5 class="card-title">Tên: @coffee.Name</h5>
+                                <p class="card-text">Loại: @coffee.Type</p>
+                                <p class="price_text">Mô tả:  <span style="color: #262626;"> @coffee.Description</span></p>
+                                <p class="price_text"><span class="text-muted">@(coffee.Price.ToString("n0")) VND</span>    </p>
+                                <a asp-route="addcart"
+                                   asp-route-productid="@coffee.Id"
+                                   class="btn btn-primary">Đặt hàng</a>
                             </div>
                         </div>
                     </div>

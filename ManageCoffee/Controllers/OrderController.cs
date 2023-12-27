@@ -26,7 +26,7 @@ namespace ManageCoffee.Controllers
         List<CartItem> GetCartItems()
         {
             var session = HttpContext.Session;
-            string jsoncart = session.GetString(CARTKEY);
+            string? jsoncart = session.GetString(CARTKEY);
             if (jsoncart != null)
             {
                 return JsonConvert.DeserializeObject<List<CartItem>>(jsoncart);
