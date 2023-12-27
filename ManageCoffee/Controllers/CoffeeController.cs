@@ -2,12 +2,7 @@
 using ManageCoffee.Models;
 using ManageCoffee.Other;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using System.Linq;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ManageCoffee.Controllers
 {

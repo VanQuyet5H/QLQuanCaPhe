@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using AutoMapper;
 using ManageCoffee.Models;
+using ManageCoffee.Other;
 using ManageCoffee.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System.Globalization;
-using System.Security.Claims;
 
 namespace ManageCoffee.Controllers
 {
@@ -13,11 +14,13 @@ namespace ManageCoffee.Controllers
         private readonly CoffeeShopContext _context;
         public const string CARTKEY = "cart";
         protected readonly IMapper _mapper;
+        private readonly INotyfService _notyfService;
 
-        public OrderController(CoffeeShopContext context, IMapper mapper)
+        public OrderController(INotyfService notyfService, CoffeeShopContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _notyfService = notyfService;
         }
         public IActionResult Index()
         {
@@ -107,7 +110,7 @@ namespace ManageCoffee.Controllers
         }
 
         [Route("/checkout")]
-        public IActionResult Checkout(Order orders)
+        public IActionResult Checkout()
         {
             var cart = GetCartItems();
             var cartItems = cart.ToList();
@@ -127,6 +130,8 @@ namespace ManageCoffee.Controllers
                 {
                     OrderId = orderDetail.Id,
                     CoffeeId = cartItem.Coffee.Id,
+                    Quantity = cartItem.Quantity,
+                    Price = cartItem.Quantity * cartItem.Coffee.Price
                 };
                 _context.OrderItem.Add(orderitem);
             }
@@ -135,9 +140,84 @@ namespace ManageCoffee.Controllers
 
             return RedirectToAction("ThankYou", new { cartItems });
         }
-        public ActionResult ThankYou(List<CartItem> cartItems)
+
+        public IActionResult ThankYou(List<CartItem> cartItems)
         {
             return View(cartItems);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ListOrderAdmin(string searchString, string currentFilter, int? pageNumber)
+        {
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            var sqlServerDbContext = from s in _context.Order
+                                     select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                sqlServerDbContext = sqlServerDbContext.Where(s => s.Status.Contains(searchString));
+            }
+
+            int pageSize = 5;
+            return View(await PaginatedList<Order>.CreateAsync(sqlServerDbContext.AsNoTracking(), pageNumber ?? 1, pageSize));
+        }
+        public bool Delete(int id)
+        {
+            try
+            {
+                var order = _context.Order.Find(id);
+                if (order == null)
+                {
+                    return false;
+                }
+                _context.Order.Remove(order);
+                _context.SaveChanges();
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Đã có lỗi xảy ra, vui lòng thử lại sau", ex);
+            }
+        }
+        public IActionResult DeleteOrder(int id)
+        {
+            try
+            {
+                bool success = Delete(id);
+                if (success)
+                {
+                    TempData["DeleteUserMessage"] = "Xoá thành công";
+                }
+                else
+                {
+                    TempData["DeleteUserMessage"] = "Xoá không thành công";
+                }
+                return RedirectToAction(nameof(ListOrderAdmin));
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Đã có lỗi xảy ra, vui lòng thử lại sau!");
+                return View("Index");
+            }
+        }
+
+        public IActionResult DetailOrder(int id)
+        {
+            var orderDetail = _context.Order.Find(id);
+            orderDetail = _context.Order
+            .Include(o => o.OrderItem)
+            .FirstOrDefault(o => o.Id == id);
+        
+            return View(orderDetail);          
         }
 
     }
