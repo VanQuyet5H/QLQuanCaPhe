@@ -109,21 +109,27 @@ namespace ManageCoffee.Controllers
         [Route("/checkout")]
         public IActionResult Checkout(Order orders)
         {
-            var cart = GetCartItems();           
+            var cart = GetCartItems();
             var cartItems = cart.ToList();
+
+            var orderDetail = new Order
+            {
+                CustomerId = 1,
+                OrderDate = DateTime.Now,
+                Status = "Pending",
+            };
+            _context.Order.Add(orderDetail);
+            _context.SaveChanges();
 
             foreach (var cartItem in cartItems)
             {
-                var orderDetail = new Order
+                var orderitem = new OrderItem
                 {
-                    CustomerId = 1,
-                    OrderDate = DateTime.Now,
-                    Status = "Pending",
+                    OrderId = orderDetail.Id,
+                    CoffeeId = cartItem.Coffee.Id,
                 };
-                var orderCart = _mapper.Map<Order>(orderDetail);
-                _context.Order.Add(orderCart);
+                _context.OrderItem.Add(orderitem);
             }
-
             _context.SaveChanges();
             ClearCart();
 
