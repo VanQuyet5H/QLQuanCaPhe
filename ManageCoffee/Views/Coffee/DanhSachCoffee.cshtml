@@ -33,19 +33,23 @@
                 </div>
             </div>
         </div>
-        <div class="card-body">
-            @foreach (var coffee in Model)
-            {
-                <div class="card" style="width: 18rem;">
-                    <img src="@coffee.Image" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <h5 class="card-title">Tên:@coffee.Name</h5>
-                        <p class="card-text">Loại:@coffee.Type</p>
-                        <p class="card-text">Giá:@coffee.Price</p>
-                        <a asp-controller="Order" asp-action="CustomerOrder" class="btn btn-primary">Buy Coffee</a>
+        <div class="container">
+            <div class="row">
+                @foreach (var coffee in Model)
+                {
+                    <div class=" col-sm-3" style="border: 1px solid #ffb2b2; border-radius: 5px; margin: 10px;">
+                        <div class="box_main">
+                            <img src="@coffee.Image" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <h5 class="card-title">Tên:@coffee.Name</h5>
+                                <p class="card-text">Loại:@coffee.Type</p>
+                                <p class="card-text">Giá:@coffee.Price</p>
+                                <a asp-controller="Order" asp-action="CustomerOrder" class="btn btn-primary">Buy Coffee</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            }
+                }
+            </div>
             <br />
             @{
                 var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
@@ -65,5 +69,6 @@
                 Sau
             </a>
         </div>
+
     </div>
 </div>
