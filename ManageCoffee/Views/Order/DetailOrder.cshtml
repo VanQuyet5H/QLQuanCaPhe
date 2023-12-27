@@ -1,0 +1,15 @@
+﻿﻿@Model ManageCoffee.Models.Order
+
+<h2>Order Details</h2>
+<p>Order ID: @Model.Id</p>
+<p>Customer ID: @Model.CustomerId</p>
+<p>Order Date: @Model.OrderDate</p>
+<p>Status: @Model.Status</p>
+
+<h3>Order Items</h3>
+<ul>
+    @foreach (var orderItem in Model.OrderItem)
+    {
+        <li>@orderItem.CoffeeId - Quantity: @orderItem.Quantity</li>
+    }
+</ul>

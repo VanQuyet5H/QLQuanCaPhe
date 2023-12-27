@@ -1,0 +1,156 @@
+﻿﻿@Model ManageCoffee.Models.Order
+@{
+    ViewData["Title"] = "Danh sách Order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<div class="content">
+    <div class="card mb-12">
+        <div class="card-header">
+            <ol class="breadcrumb mb-4">
+                <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item active">Danh sách Order</li>
+            </ol>
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <form asp-action="ListOrderAdmin" method="get" class="form-inline">
+                        <div class="row">
+                            <div class="col-md-6 col-xs-12">
+
+                                <input type="text" value="@ViewData["CurrentFilter"]" name="filter" class="form-control" placeholder="Tìm kiếm tên coffee " />
+
+                            </div>
+                            <div class="col-md-6 col-xs-12">
+
+                                <button type="submit" class="btn btn-primary" value="Search">Tìm</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                @if (TempData["EditUserMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        </button> <h5><i class="icon fas fa-check"></i> @TempData["EditUserMessage"]</h5>
+                    </div>
+                }
+                @if (TempData["DeleteUserMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        </button> <h5><i class="icon fas fa-check"></i> @TempData["DeleteUserMessage"]</h5>
+                    </div>
+                }
+                <table class="table table-hover table-striped table-head-bg-primary" style="text-align:center;">
+                    <thead class="table-head-bg-primary">
+                        <tr>
+                            <th>
+                                STT
+                            </th>
+                            <th>
+                                ID
+                            </th>
+                            <th>
+                                ID Customer
+                            </th>
+                            <th>
+                                Ngày Order
+                            </th>
+                            <th>
+                                Trạng thái
+                            </th>
+                            <th>
+                                Thao tác
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count == 0)
+                        {
+
+                            <tr>
+                                <td colspan="9" class="text-center">Không có dữ liệu</td>
+                            </tr>
+                        }
+                        @if (Model.Count != 0)
+                        {
+                            @foreach (var item in Model)
+                            {
+
+                                <tr>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        @item.Id
+                                    </td>
+                                    <td>
+                                        @item.CustomerId
+                                    </td>
+                                    <td>
+                                        @item.OrderDate
+                                    </td>
+                                    <td>
+                                        @item.Status
+                                    </td>
+
+                                    <td>
+                                        @* <a class="btn btn-success" style="text-decoration:none; " href="/Admin/VaccineData/Edit/@item.Id"><i class="fa fa-edit"></i> Sửa</a> *@
+                                        <a style="text-decoration: none;" href="@Url.Action("DeleteOrder", "Order", new { id = item.Id })" class="btn btn-danger" onclick="return confirm('Xác nhận xoá?')"><i class="fas fa-trash"></i> Xoá</a>
+                                        <a class="btn btn-info" style="text-decoration:none; " href="@Url.Action("DetailOrder", "Order", new { id = item.Id })"><i class="bi bi-info-circle"></i> Chi tiết</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <br />
+                @{
+                    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                }
+
+                <a asp-action="ListOrderAdmin"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn  btn-primary @prevDisabled">
+                    Trước
+                </a>
+                <a asp-action="ListOrderAdmin"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn  btn-primary @nextDisabled">
+                    Sau
+                </a>
+            </div>
+            <div class="modal fade" id="CancelDontu" tabindex="-1" role="dialog" aria-labelledby="exaple">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <form method="post">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="#exaple">Xóa Order</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-body">
+                        <h2>bạn có chắc muốn xóa sản phẩm này</h2>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
