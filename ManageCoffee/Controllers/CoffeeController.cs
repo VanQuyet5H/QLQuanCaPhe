@@ -1,8 +1,16 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using ClosedXML.Excel;
 using ManageCoffee.Models;
 using ManageCoffee.Other;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using System.Data;
+using System.Linq;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ManageCoffee.Controllers
 {
@@ -19,6 +27,7 @@ namespace ManageCoffee.Controllers
         [HttpGet]
         public async Task<IActionResult> DanhSachCoffee(string searchString, string currentFilter, int? pageNumber)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -35,6 +44,10 @@ namespace ManageCoffee.Controllers
             {
                 sqlServerDbContext = sqlServerDbContext.Where(s => s.Name.Contains(searchString));
             }
+            else
+            {
+                _notyfService.Warning("Không tìm thấy sản phẩm coffee");
+            }
 
             int pageSize = 3;
             return View(await PaginatedList<Coffee>.CreateAsync(sqlServerDbContext.AsNoTracking(), pageNumber ?? 1, pageSize));
@@ -46,10 +59,12 @@ namespace ManageCoffee.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> ThemCoffee([Bind("Id", "Name", "Description", "Type", "Image", "Price", "Quantity", "InStock")] Coffee coffee, IFormFile formFile)
+        public async Task<IActionResult> ThemCoffee([Bind("Name,Description,Type,Image,Price,Quantity,InStock")] Coffee coffee, IFormFile formFile)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (ModelState.IsValid)
             {
+
                 string filename = formFile.FileName;
                 coffee.Image = filename.ToString(); // tên ảnh
                 var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/assets/img", filename);
@@ -67,6 +82,7 @@ namespace ManageCoffee.Controllers
         }
         public async Task<IActionResult> CapNhatCoffee(int? id)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (id == null)
             {
                 return NotFound();
@@ -81,8 +97,9 @@ namespace ManageCoffee.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CapNhatCoffee(int id, [Bind("Id,Name,Description,Type,Image,Price,Quantity,InStock")] Coffee coffee)
+        public async Task<IActionResult> CapNhatCoffee(int id, [Bind("Id,Name,Description,Type,Image,Price,Quantity,InStock")] Coffee coffee, IFormFile formFile)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (id != coffee.Id)
             {
                 return NotFound();
@@ -92,6 +109,10 @@ namespace ManageCoffee.Controllers
             {
                 try
                 {
+                    string filename = formFile.FileName;
+                    coffee.Image = filename.ToString(); // tên ảnh
+                    var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/assets/img", filename);
+                    formFile.CopyTo(new FileStream(imagePath, FileMode.Create));
                     _context.Update(coffee);
                     await _context.SaveChangesAsync();
                     _notyfService.Success("Bạn đã cập nhật thông tin coffee thành công.");
@@ -107,41 +128,26 @@ namespace ManageCoffee.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(DanhSachCoffee));
+                return RedirectToAction(nameof(DanhSachCoffeeAdmin));
             }
 
 
             return View(coffee);
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public ActionResult Delete(int id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
+            // Lấy đối tượng account user từ view
+            var coffee = _context.Coffee.Find(id);
 
-            var coffee = await _context.Coffee
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (coffee == null)
-            {
-                return NotFound();
-            }
-
-            return View(coffee);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-
-
-            var coffee = await _context.Coffee.FindAsync(id);
+            // Xóa đối tượng account user khỏi database
             _context.Coffee.Remove(coffee);
-            await _context.SaveChangesAsync();
-            _notyfService.Success("Bạn đã xóa thông tin của coffee thành công.");
-            return RedirectToAction(nameof(DanhSachCoffee));
+
+            // Lưu các thay đổi vào database
+            _context.SaveChanges();
+            _notyfService.Success("Bạn đã xóa thông tin sản phẩm thành công.");
+            return RedirectToAction("DanhSachCoffeeAdmin");
         }
         private bool CoffeeExists(int id)
         {
@@ -150,6 +156,7 @@ namespace ManageCoffee.Controllers
         [HttpGet]
         public async Task<IActionResult> DanhSachCoffeeAdmin(string searchString, string currentFilter, int? pageNumber)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -162,14 +169,71 @@ namespace ManageCoffee.Controllers
             ViewData["CurrentFilter"] = searchString;
             var sqlServerDbContext = from s in _context.Coffee
                                      select s;
+            ViewData["coffee"] = (from s in _context.Coffee
+                                  select s.Id).Count();
             if (!String.IsNullOrEmpty(searchString))
             {
                 sqlServerDbContext = sqlServerDbContext.Where(s => s.Name.Contains(searchString));
+            }
+            else
+            {
+                _notyfService.Warning("Không tìm thấy sản phẩm coffee");
             }
 
             int pageSize = 3;
             return View(await PaginatedList<Coffee>.CreateAsync(sqlServerDbContext.AsNoTracking(), pageNumber ?? 1, pageSize));
 
         }
+        public async Task<IEnumerable<Coffee>> GetCoffeesAsync()
+        {
+
+            // Tạo một truy vấn để lấy dữ liệu
+            var query = _context.Coffee;
+
+            // Chạy truy vấn một cách bất đồng bộ
+            var coffees = await query.ToListAsync();
+
+            // Trả về danh sách các đối tượng `Coffee`
+            return coffees;
+        }
+        [HttpPost]
+        [Route("export-excel")]
+        public FileResult XuatExcelCoffee()
+        {
+            DataTable dt = new DataTable("Grid");
+            dt.Columns.AddRange(new DataColumn[8] { new DataColumn("STT"),
+                                                     new DataColumn("Tên Coffee"),
+                                                      new DataColumn("Hình Ảnh"),
+                                                     new DataColumn("Giá"),
+                                                     new DataColumn("Số Lượng"),
+                                                     new DataColumn("Loại"),
+                                                      new DataColumn("Trạng Thái"),
+                                                     new DataColumn("Thành Tiền")
+
+                                                    });
+
+            var insuranceCertificate = from InsuranceCertificate in _context.Coffee select InsuranceCertificate;
+
+           
+            foreach (var insurance in insuranceCertificate)
+            {
+                dt.Rows.Add(insurance.Id, insurance.Name, insurance.Image, insurance.Price, insurance.Quantity,
+                     insurance.Type,insurance.InStock, insurance.Quantity * insurance.Price);
+            }
+
+            using (XLWorkbook wb = new XLWorkbook()) //Install ClosedXml from Nuget for XLWorkbook  
+            {
+                wb.Worksheets.Add(dt);
+                using (MemoryStream stream = new MemoryStream()) //using System.IO;  
+                {
+                    wb.SaveAs(stream);
+                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "ExcelFile.xlsx");
+                }
+            }
+
+        }
+
+
+
     }
 }
