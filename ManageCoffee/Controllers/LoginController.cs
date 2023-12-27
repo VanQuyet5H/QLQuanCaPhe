@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ManageCoffee.Controllers
 {
@@ -28,11 +30,13 @@ namespace ManageCoffee.Controllers
         [HttpPost]
         public IActionResult DangNhap(string username, string password)
         {
+            
+            var f_password = GetMD5(password);
             var user = _context.User.FirstOrDefault(u => u.Username == username);
 
 
             // If the user is found and the password matches
-            if (user != null && user.Password == password)
+            if (user != null && user.Password == f_password)
             {
                 // Set the user as logged in
                 var claims = new List<Claim>
@@ -78,29 +82,30 @@ namespace ManageCoffee.Controllers
             // Validate user data
             if (ModelState.IsValid)
             {
+                var check = _context.User.FirstOrDefault(s => s.Username == user.Username);
                 //kiểm tra username đã tồn tại
-                if (_context.User.Any(u => u.Username == user.Username))
+                if (check == null)
                 {
-                    // Username already exists
-                    ModelState.AddModelError("Username", "Username đã tồn tại");
-                    return View("DangKy", user);
+                    user.Password = GetMD5(user.Password);
+                    _context.Add(user);
+                    await _context.SaveChangesAsync();
+                    HttpContext.Session.SetString("User", user.Username);
+                    //Thong bao
+                    _notyfService.Success("Đăng ký thành công");
+                    return RedirectToAction("DangNhap", "Login");
                 }
-                // Create new user
-                _context.Add(user);
-                await _context.SaveChangesAsync();
+                else
+                {
+                    _notyfService.Error("Đăng ký thất bại");
+                }
 
-                // Login user after registration
-                HttpContext.Session.SetString("User", user.Username);
-                //Thong bao
-                _notyfService.Success("Đăng ký thành công");
-                return RedirectToAction("DangNhap", "Login");
+
             }
-            _notyfService.Error("Đăng ký thất bại");
-            // Return error if validation fails
             return View("DangKy", user);
         }
         public async Task<IActionResult> DanhSachAccount(string searchString, string currentFilter, int? pageNumber)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -119,13 +124,17 @@ namespace ManageCoffee.Controllers
                 sqlServerDbContext = sqlServerDbContext.Where(s => s.Username.Contains(searchString)
                                        || s.Email.Contains(searchString));
             }
+            else
+            {
+                _notyfService.Warning("Không tìm thấy tài khoản");
+            }
             int pageSize = 3;
             return View(await PaginatedList<User>.CreateAsync(sqlServerDbContext.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
         [HttpGet]
         public async Task<IActionResult> CapNhatAccount(int? id)
         {
-
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (id == null)
             {
                 return NotFound();
@@ -141,6 +150,7 @@ namespace ManageCoffee.Controllers
         [HttpPost]
         public async Task<IActionResult> CapNhatAccount(int? id, [Bind("Id", "Username,Password,Email,Role")] User user)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (id != user.Id)
             {
                 return NotFound();
@@ -175,6 +185,7 @@ namespace ManageCoffee.Controllers
         }
         public ActionResult Delete(int id)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             // Lấy đối tượng account user từ view
             var accountUser = _context.User.Find(id);
 
@@ -185,6 +196,20 @@ namespace ManageCoffee.Controllers
             _context.SaveChanges();
             _notyfService.Success("Bạn đã xóa thông tin account user thành công.");
             return RedirectToAction("DanhSachAccount");
+        }
+        public static string GetMD5(string str)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] fromData = Encoding.UTF8.GetBytes(str);
+            byte[] targetData = md5.ComputeHash(fromData);
+            string byte2String = null;
+
+            for (int i = 0; i < targetData.Length; i++)
+            {
+                byte2String += targetData[i].ToString("x2");
+
+            }
+            return byte2String;
         }
     }
 }

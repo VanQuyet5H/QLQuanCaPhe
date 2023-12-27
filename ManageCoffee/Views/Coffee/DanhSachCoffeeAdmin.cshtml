@@ -13,10 +13,21 @@
             </ol>
             <div class="row">
                 <div class="col-md-6 col-xs-12">
+                    <div class="row">
+                        <div class="col-md-4 col-xs-12">
+                            <a class="btn btn-primary" asp-action="ThemCoffee">Thêm Sản Phẩm</a>
+                        </div>
+                        <div class="col-md-4 col-xs-12">
+                            @using (Html.BeginForm("XuatExcelCoffee", "Coffee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
 
-                    <a class="btn btn-primary" asp-action="ThemCoffee">Thêm Sản Phẩm</a>
+                                <div>
+                                    <input type="submit" value="ExportExcel" class="btn btn-primary" />
+                                </div>
 
-
+                            }
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-6 col-xs-12">
                     <form asp-action="DanhSachCoffee" method="get" class="form-inline">
@@ -90,7 +101,11 @@
                                     @item.Type
                                 </td>
                                 <td>
+<<<<<<< Updated upstream
                                     @item.Image
+=======
+                                    <img style="width: 80px; height: auto;" src="@("../assets/img/"+item.Image)">
+>>>>>>> Stashed changes
                                 </td>
                                 <td>
                                     @item.Price
@@ -99,12 +114,19 @@
                                     @item.Quantity
                                 </td>
                                 <td>
-                                    @item.InStock
+                                    @if(@item.InStock==true)
+                                    {
+                                        <span>Còn Hàng</span>
+                                    }
+                                    else if(@item.InStock==false)
+                                    {
+                                        <span>Hết Hàng</span>
+                                    }
                                 </td>
                                 <td>
                                     <div class="btn-group">
                                         <a asp-action="CapNhatCoffee" asp-route-id="@item.Id" class="btn btn-sm btn-info"><i class="fa fa-pencil fa-fw"></i>Cập Nhật</a>
-                                        <a asp-action="DeleteConfirmed" asp-route-id="@item.Id" class="btn btn-sm btn-danger ml-1"><i class="fa fa-ban fa-fw"></i>Xóa</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger ml-1"><i class="fa fa-ban fa-fw"></i>Xóa</a>
 
                                     </div>
                                 </td>
@@ -131,26 +153,7 @@
                     Sau
                 </a>
             </div>
-            <div class="modal fade" id="CancelDontu" tabindex="-1" role="dialog" aria-labelledby="exaple">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <form method="post">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="#exaple">Xóa sản phẩm</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-body">
-                        <h2>bạn có chắc muốn xóa sản phẩm này</h2>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    </div>
-                </div>
-        </div>
+            
     </div>
 </div>
 

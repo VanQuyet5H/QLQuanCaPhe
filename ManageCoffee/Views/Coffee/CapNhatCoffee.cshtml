@@ -31,6 +31,14 @@
                         <input asp-for="Quantity" type="number" class="form-control" />
                         <span asp-validation-for="Quantity" class="text-danger"></span>
                     </div>
+                    <div class="form-group" style="height:50px;width:50px;">
+                        <label asp-for="InStock" class="control-label">Tình Trạng:</label>
+                        <input asp-for="InStock" class="form-control" />
+                        <span asp-validation-for="InStock" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    
                     <div class="form-group">
                         <label asp-for="Price" class="control-label">Giá:</label>
                         <input asp-for="Price" type="number" class="form-control" />
@@ -40,13 +48,6 @@
                         <label asp-for="Description" class="control-label">Mô Tả:</label>
                         <textarea asp-for="Description" class="form-control"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="InStock" class="control-label">Tình Trạng:</label>
-                        <input asp-for="InStock" class="form-control" />
-                        <span asp-validation-for="InStock" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Image" class="control-label">Hình Ảnh:</label>

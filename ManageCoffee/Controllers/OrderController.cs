@@ -25,6 +25,7 @@ namespace ManageCoffee.Controllers
         }
         List<CartItem> GetCartItems()
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             var session = HttpContext.Session;
             string jsoncart = session.GetString(CARTKEY);
             if (jsoncart != null)
@@ -50,7 +51,7 @@ namespace ManageCoffee.Controllers
         [Route("addcart/{productid:int}", Name = "addcart")]
         public IActionResult AddToCart([FromRoute] int productid)
         {
-
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             var product = _context.Coffee
                 .Where(p => p.Id == productid)
                 .FirstOrDefault();
@@ -82,6 +83,7 @@ namespace ManageCoffee.Controllers
         [HttpPost]
         public IActionResult UpdateCart([FromForm] int productid, [FromForm] int quantity)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             var cart = GetCartItems();
             var cartitem = cart.Find(p => p.Coffee.Id == productid);
             if (cartitem != null)
@@ -135,5 +137,85 @@ namespace ManageCoffee.Controllers
             return View(cartItems);
         }
 
+<<<<<<< Updated upstream
+=======
+        [HttpGet]
+        public async Task<IActionResult> ListOrderAdmin(string searchString, string currentFilter, int? pageNumber)
+        {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+            var sqlServerDbContext = from s in _context.Order
+                                     select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                sqlServerDbContext = sqlServerDbContext.Where(s => s.Status.Contains(searchString));
+            }
+
+            int pageSize = 5;
+            return View(await PaginatedList<Order>.CreateAsync(sqlServerDbContext.AsNoTracking(), pageNumber ?? 1, pageSize));
+        }
+        public bool Delete(int id)
+        {
+            try
+            {
+                var order = _context.Order.Find(id);
+                if (order == null)
+                {
+                    return false;
+                }
+                _context.Order.Remove(order);
+                _context.SaveChanges();
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Đã có lỗi xảy ra, vui lòng thử lại sau", ex);
+            }
+        }
+        public IActionResult DeleteOrder(int id)
+        {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
+            try
+            {
+                bool success = Delete(id);
+                if (success)
+                {
+                    TempData["DeleteUserMessage"] = "Xoá thành công";
+                }
+                else
+                {
+                    TempData["DeleteUserMessage"] = "Xoá không thành công";
+                }
+                return RedirectToAction(nameof(ListOrderAdmin));
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "Đã có lỗi xảy ra, vui lòng thử lại sau!");
+                return View("Index");
+            }
+        }
+
+        public IActionResult DetailOrder(int id)
+        {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
+            var orderDetail = _context.Order.Find(id);
+            orderDetail = _context.Order
+            .Include(o => o.OrderItem)
+            .FirstOrDefault(o => o.Id == id);
+        
+            return View(orderDetail);          
+        }
+
+>>>>>>> Stashed changes
     }
 }
