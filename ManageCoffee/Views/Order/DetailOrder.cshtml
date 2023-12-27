@@ -7,9 +7,20 @@
 <p>Status: @Model.Status</p>
 
 <h3>Order Items</h3>
+@{
+    decimal totalAmount = 0; 
+}
+
 <ul>
     @foreach (var orderItem in Model.OrderItem)
     {
-        <li>@orderItem.CoffeeId - Quantity: @orderItem.Quantity</li>
+        <li>
+            Mã Coffee: @orderItem.CoffeeId -
+            Số lượng: @orderItem.Quantity -
+            Thành tiền: @orderItem.Price.ToString("n0") VNĐ
+        </li>
+        totalAmount += orderItem.Price;
     }
 </ul>
+<p>Tổng giá trị: @totalAmount.ToString("n0") VNĐ</p>
+
