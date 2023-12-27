@@ -116,7 +116,6 @@ namespace ManageCoffee.Controllers
             {
                 var orderDetail = new Order
                 {
-                    CoffeeId = cartItem.Coffee.Id,
                     CustomerId = 1,
                     OrderDate = DateTime.Now,
                     Status = "Pending",
