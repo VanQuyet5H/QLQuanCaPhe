@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ManageCoffee.Migrations
 {
     [DbContext(typeof(CoffeeShopContext))]
-    [Migration("20231215100145_SuaBangOrder")]
-    partial class SuaBangOrder
+    [Migration("20231227035808_DbInit")]
+    partial class DbInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -33,18 +33,15 @@ namespace ManageCoffee.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("InStock")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
@@ -54,7 +51,6 @@ namespace ManageCoffee.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -95,9 +91,6 @@ namespace ManageCoffee.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CoffeeId")
-                        .HasColumnType("int");
-
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
@@ -114,8 +107,6 @@ namespace ManageCoffee.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CoffeeId");
-
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Order");
@@ -128,6 +119,9 @@ namespace ManageCoffee.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CoffeeId")
+                        .HasColumnType("int");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -180,19 +174,11 @@ namespace ManageCoffee.Migrations
 
             modelBuilder.Entity("ManageCoffee.Models.Order", b =>
                 {
-                    b.HasOne("ManageCoffee.Models.Coffee", "Coffee")
-                        .WithMany()
-                        .HasForeignKey("CoffeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ManageCoffee.Models.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Coffee");
 
                     b.Navigation("Customer");
                 });
