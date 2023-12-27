@@ -1,3 +1,4 @@
+using AspNetCoreHero.ToastNotification;
 using ManageCoffee.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +11,7 @@ builder.Services.AddDbContext<CoffeeShopContext>(options =>
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddAutoMapper(typeof(Program));
-
+builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.TopCenter; });
 builder.Services.AddSession(options =>
 {
 	options.IdleTimeout = TimeSpan.FromSeconds(1800);

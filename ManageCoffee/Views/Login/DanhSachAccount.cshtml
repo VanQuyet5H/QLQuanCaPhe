@@ -61,13 +61,13 @@
                             <th>
                                 Thao Tác
                             </th>
-          
+
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var accountUser in Model)
                         {
-                           
+
                             <tr>
                                 <td>
                                     @accountUser.Id
@@ -88,33 +88,33 @@
                                     <div class="btn-group">
                                         <a asp-action="CapNhatAccount" asp-route-id="@accountUser.Id" class="btn btn-sm btn-info"><i class="fa fa-pencil fa-fw"></i>Cập Nhật</a>
                                         <a asp-action="Delete" asp-route-id="@accountUser.Id" class="btn btn-sm btn-danger ml-1"><i class="fa fa-ban fa-fw"></i>Xóa Account</a>
-          
+
                                     </div>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
-                    <br />
-                    @{
-                        var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-                        var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-                    }
+                <br />
+                @{
+                    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                }
 
-                    <a asp-action="DanhSachAccount"
-                       asp-route-pageNumber="@(Model.PageIndex - 1)"
-                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                       class="btn  btn-primary @prevDisabled">
-                        Trước
-                    </a>
-                    <a asp-action="DanhSachAccount"
-                       asp-route-pageNumber="@(Model.PageIndex + 1)"
-                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
-                       class="btn  btn-primary @nextDisabled">
-                        Sau
-                    </a>
+                <a asp-action="DanhSachAccount"
+                   asp-route-pageNumber="@(Model.PageIndex - 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn  btn-primary @prevDisabled">
+                    Trước
+                </a>
+                <a asp-action="DanhSachAccount"
+                   asp-route-pageNumber="@(Model.PageIndex + 1)"
+                   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                   class="btn  btn-primary @nextDisabled">
+                    Sau
+                </a>
             </div>
         </div>
-            
+
     </div>
 </div>

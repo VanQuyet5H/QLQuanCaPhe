@@ -280,7 +280,7 @@
 				<div class="sidebar-content">
 					<ul class="nav nav-primary">
 						<li class="nav-item">
-							<a data-toggle="collapse" asp-controller="Home" asp-action="Index" class="collapsed" aria-expanded="false">
+							<a  asp-controller="Home" asp-action="Index" >
 								<i class="fas fa-home"></i>
 								<p>Home</p>
 								
@@ -301,7 +301,7 @@
 							<div class="collapse" id="base">
 								<ul class="nav nav-collapse">
 									<li>
-										<a href="#">
+										<a asp-controller="Coffee" asp-action="DanhSachCoffeeAdmin">
 											<span class="sub-item">Kho coffee</span>
 										</a>
 									</li>
@@ -510,50 +510,7 @@
 	<script src="/assets/js/setting-demo.js"></script>
 	<script src="/assets/js/demo.js"></script>
 	<script>
-		Circles.create({
-			id:'circles-1',
-			radius:45,
-			value:60,
-			maxValue:100,
-			width:7,
-			text: 5,
-			colors:['#f1f1f1', '#FF9E27'],
-			duration:400,
-			wrpClass:'circles-wrp',
-			textClass:'circles-text',
-			styleWrapper:true,
-			styleText:true
-		})
 
-		Circles.create({
-			id:'circles-2',
-			radius:45,
-			value:70,
-			maxValue:100,
-			width:7,
-			text: 36,
-			colors:['#f1f1f1', '#2BB930'],
-			duration:400,
-			wrpClass:'circles-wrp',
-			textClass:'circles-text',
-			styleWrapper:true,
-			styleText:true
-		})
-
-		Circles.create({
-			id:'circles-3',
-			radius:45,
-			value:40,
-			maxValue:100,
-			width:7,
-			text: 12,
-			colors:['#f1f1f1', '#F25961'],
-			duration:400,
-			wrpClass:'circles-wrp',
-			textClass:'circles-text',
-			styleWrapper:true,
-			styleText:true
-		})
 
 		var totalIncomeChart = document.getElementById('totalIncomeChart').getContext('2d');
 
