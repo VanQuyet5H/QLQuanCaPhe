@@ -1,7 +1,9 @@
-﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using AutoMapper;
 using DocumentFormat.OpenXml.Spreadsheet;
 using ManageCoffee.Models;
 using ManageCoffee.Other;
+using ManageCoffee.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -18,10 +20,12 @@ namespace ManageCoffee.Controllers
     {
         private readonly CoffeeShopContext _context;
         private readonly INotyfService _notyfService;
-        public LoginController(CoffeeShopContext context, INotyfService notyfService)
+        private readonly IMapper _mapper;
+        public LoginController(CoffeeShopContext context, INotyfService notyfService, IMapper mapper)
         {
             _context = context;
             _notyfService = notyfService;
+            _mapper = mapper;
         }
         [HttpGet]
         public IActionResult DangNhap()
@@ -29,37 +33,34 @@ namespace ManageCoffee.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult DangNhap(string username, string password)
+        public async Task<IActionResult> DangNhap(string username, string password)
         {
-            if (ModelState.IsValid)
+
+            var user = _context.User.FirstOrDefault(u => u.Username == username);
+
+            if (user != null && user.Password == password)
             {
-                var f_password = GetMD5(password);
-                var user = _context.User.FirstOrDefault(u => u.Username == username);
-                //var data = _context.User.Where(s => s.Username.Equals(username) && s.Password.Equals(f_password)).ToList();
-                if (user != null && user.Password == f_password)
+                var claims = new List<Claim>
                 {
-                    // Set the user as logged in
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name,user.Username),
-                        new Claim(ClaimTypes.Role, user.Role),
-                    };
-                    HttpContext.Session.SetString("SessionUser", user?.Username ?? "");
-                    var claimsIdentity = new ClaimsIdentity(
-                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity)
-                      );
-                    //Thông báo
-                    _notyfService.Success("Đăng nhập thành công");
-                    // Redirect to the home page
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    _notyfService.Error("Vui lòng kiểm tra lại thông tin");
-                }
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role),
+                    new Claim("IDcustomer", user.Id.ToString()),
+                };
+                HttpContext.Session.SetString("SessionUser", user?.Username ?? "");
+                var claimsIdentity = new ClaimsIdentity(
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity)
+                );
+
+                _notyfService.Success("Đăng nhập thành công");
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                _notyfService.Error("Vui lòng kiểm tra lại thông tin");
+          
             }
             return RedirectToAction("DangNhap");
         }
@@ -77,31 +78,36 @@ namespace ManageCoffee.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> DangKy([Bind("Username,Password,Email,Role")] User user)
+        public IActionResult DangKy(UserModel user)
         {
 
-            // Validate user data
             if (ModelState.IsValid)
-            {
-                var check = _context.User.FirstOrDefault(s => s.Username == user.Username);
-                //kiểm tra username đã tồn tại
-                if (check == null)
-                {
-                    user.Password = GetMD5(user.Password);
-                    _context.Add(user);
-                    await _context.SaveChangesAsync();
-                    HttpContext.Session.SetString("User", user.Username);
-                    //Thong bao
-                    _notyfService.Success("Đăng ký thành công");
-                    return RedirectToAction("DangNhap", "Login");
-                }
-                else
-                {
-                    _notyfService.Error("Đăng ký thất bại");
-                }
 
+            {               
+                var userCreate = _mapper.Map<User>(user);
+                if (_context.User.Any(u => u.Username == userCreate.Username))
+                {
+                    ModelState.AddModelError("Username", "Username đã tồn tại");
+                    return View("DangKy", user);
+                }
+                _context.User.Add(userCreate);                
+                _context.SaveChanges();
 
+                var userDetail = new Customer
+                {
+                    IdUser = userCreate.Id,
+                    Name = user.Name,
+                };
+                _context.Customer.Add(userDetail);
+                _context.SaveChanges();
+
+                HttpContext.Session.SetString("User", user.Username);
+
+                _notyfService.Success("Đăng ký thành công");
+                return RedirectToAction("DangNhap", "Login");
             }
+            _notyfService.Error("Đăng ký thất bại");
+       
             return View("DangKy", user);
         }
         public async Task<IActionResult> DanhSachAccount(string searchString, string currentFilter, int? pageNumber)
