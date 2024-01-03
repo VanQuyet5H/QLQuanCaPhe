@@ -3,6 +3,7 @@ using AutoMapper;
 using ManageCoffee.Models;
 using ManageCoffee.Other;
 using ManageCoffee.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -110,35 +111,46 @@ namespace ManageCoffee.Controllers
         }
 
         [Route("/checkout")]
+        [Authorize]
         public IActionResult Checkout()
         {
-            var cart = GetCartItems();
-            var cartItems = cart.ToList();
-
-            var orderDetail = new Order
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "IDcustomer");
+            if (userIdClaim != null)
             {
-                CustomerId = 1,
-                OrderDate = DateTime.Now,
-                Status = "Pending",
-            };
-            _context.Order.Add(orderDetail);
-            _context.SaveChanges();
+                int IDcustomer = Convert.ToInt32(userIdClaim.Value);
 
-            foreach (var cartItem in cartItems)
-            {
-                var orderitem = new OrderItem
+                var cart = GetCartItems();
+                var cartItems = cart.ToList();
+
+                var orderDetail = new Order
                 {
-                    OrderId = orderDetail.Id,
-                    CoffeeId = cartItem.Coffee.Id,
-                    Quantity = cartItem.Quantity,
-                    Price = cartItem.Quantity * cartItem.Coffee.Price
+                    CustomerId = IDcustomer, 
+                    OrderDate = DateTime.Now,
+                    Status = "Pending",
                 };
-                _context.OrderItem.Add(orderitem);
-            }
-            _context.SaveChanges();
-            ClearCart();
+                _context.Order.Add(orderDetail);
+                _context.SaveChanges();
 
-            return RedirectToAction("ThankYou", new { cartItems });
+                foreach (var cartItem in cartItems)
+                {
+                    var orderitem = new OrderItem
+                    {
+                        OrderId = orderDetail.Id,
+                        CoffeeId = cartItem.Coffee.Id,
+                        Quantity = cartItem.Quantity,
+                        Price = cartItem.Quantity * cartItem.Coffee.Price
+                    };
+                    _context.OrderItem.Add(orderitem);
+                }
+                _context.SaveChanges();
+                ClearCart();
+
+                return RedirectToAction("ThankYou", new { cartItems });
+            }
+            else
+            {
+                return RedirectToAction("DangNhap", "Account"); 
+            }
         }
 
         public IActionResult ThankYou(List<CartItem> cartItems)

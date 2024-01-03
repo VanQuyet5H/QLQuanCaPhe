@@ -9,6 +9,7 @@ namespace ManageCoffee.Other
         public AutoMapper()
         {
             CreateMap<Order, CartItem>().ReverseMap();
+            CreateMap<User, UserModel>().ReverseMap();
         }
     }
 }

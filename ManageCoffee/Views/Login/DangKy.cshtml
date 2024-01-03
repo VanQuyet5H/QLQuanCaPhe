@@ -1,4 +1,4 @@
-﻿@model ManageCoffee.Models.User
+﻿@model ManageCoffee.ViewModels.UserModel
 ﻿@{
     Layout = null;
 
@@ -20,6 +20,7 @@
                 <input type="text" asp-for="Username" placeholder="username" required />
                 <input type="password" asp-for="Password" placeholder="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Phải chứa ít nhất một số và một chữ cái viết hoa và viết thường và ít nhất 8 ký tự trở lên" required />
                 <input type="text" asp-for="Email" placeholder="email address" required />
+                <input type="text" asp-for="Name" placeholder="name" required />
                 <select asp-for="Role" style="width:270px;height:46px;margin-bottom:30px;">
                     <option value="Nhân Viên">Nhân Viên</option>
                     <option value="Chủ Cửa Hàng">Chủ Cửa Hàng</option>
