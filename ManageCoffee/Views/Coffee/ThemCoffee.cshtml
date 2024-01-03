@@ -31,7 +31,11 @@
                         <input asp-for="Quantity" type="number" class="form-control" />
                         <span asp-validation-for="Quantity" class="text-danger"></span>
                     </div>
-                    
+                    <div class="form-group">
+                        <label asp-for="InStock" class="control-label">Tình Trạng:</label>
+                        <input asp-for="InStock" class="form-control" />
+                        <span asp-validation-for="InStock" class="text-danger"></span>
+                    </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">

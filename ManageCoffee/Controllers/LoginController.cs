@@ -1,5 +1,6 @@
-﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using ManageCoffee.Models;
 using ManageCoffee.Other;
 using ManageCoffee.ViewModels;
@@ -10,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ManageCoffee.Controllers
 {
@@ -32,6 +35,7 @@ namespace ManageCoffee.Controllers
         [HttpPost]
         public async Task<IActionResult> DangNhap(string username, string password)
         {
+
             var user = _context.User.FirstOrDefault(u => u.Username == username);
 
             if (user != null && user.Password == password)
@@ -56,6 +60,7 @@ namespace ManageCoffee.Controllers
             else
             {
                 _notyfService.Error("Vui lòng kiểm tra lại thông tin");
+          
             }
             return RedirectToAction("DangNhap");
         }
@@ -77,6 +82,7 @@ namespace ManageCoffee.Controllers
         {
 
             if (ModelState.IsValid)
+
             {               
                 var userCreate = _mapper.Map<User>(user);
                 if (_context.User.Any(u => u.Username == userCreate.Username))
@@ -101,11 +107,12 @@ namespace ManageCoffee.Controllers
                 return RedirectToAction("DangNhap", "Login");
             }
             _notyfService.Error("Đăng ký thất bại");
-
+       
             return View("DangKy", user);
         }
         public async Task<IActionResult> DanhSachAccount(string searchString, string currentFilter, int? pageNumber)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (searchString != null)
             {
                 pageNumber = 1;
@@ -124,13 +131,17 @@ namespace ManageCoffee.Controllers
                 sqlServerDbContext = sqlServerDbContext.Where(s => s.Username.Contains(searchString)
                                        || s.Email.Contains(searchString));
             }
+            else
+            {
+                _notyfService.Warning("Không tìm thấy tài khoản");
+            }
             int pageSize = 3;
             return View(await PaginatedList<User>.CreateAsync(sqlServerDbContext.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
         [HttpGet]
         public async Task<IActionResult> CapNhatAccount(int? id)
         {
-
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (id == null)
             {
                 return NotFound();
@@ -146,6 +157,7 @@ namespace ManageCoffee.Controllers
         [HttpPost]
         public async Task<IActionResult> CapNhatAccount(int? id, [Bind("Id", "Username,Password,Email,Role")] User user)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             if (id != user.Id)
             {
                 return NotFound();
@@ -180,6 +192,7 @@ namespace ManageCoffee.Controllers
         }
         public ActionResult Delete(int id)
         {
+            ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");
             // Lấy đối tượng account user từ view
             var accountUser = _context.User.Find(id);
 
@@ -190,6 +203,20 @@ namespace ManageCoffee.Controllers
             _context.SaveChanges();
             _notyfService.Success("Bạn đã xóa thông tin account user thành công.");
             return RedirectToAction("DanhSachAccount");
+        }
+        public static string GetMD5(string str)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] fromData = Encoding.UTF8.GetBytes(str);
+            byte[] targetData = md5.ComputeHash(fromData);
+            string byte2String = null;
+
+            for (int i = 0; i < targetData.Length; i++)
+            {
+                byte2String += targetData[i].ToString("x2");
+
+            }
+            return byte2String;
         }
     }
 }
