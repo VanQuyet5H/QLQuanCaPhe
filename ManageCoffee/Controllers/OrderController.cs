@@ -124,7 +124,7 @@ namespace ManageCoffee.Controllers
 
                 var orderDetail = new Order
                 {
-                    CustomerId = IDcustomer, 
+                    CustomerId = IDcustomer,
                     OrderDate = DateTime.Now,
                     Status = "Pending",
                 };
@@ -149,7 +149,7 @@ namespace ManageCoffee.Controllers
             }
             else
             {
-                return RedirectToAction("DangNhap", "Account"); 
+                return RedirectToAction("DangNhap", "Account");
             }
         }
 
@@ -161,26 +161,47 @@ namespace ManageCoffee.Controllers
         [HttpGet]
         public async Task<IActionResult> ListOrderAdmin(string searchString, string currentFilter, int? pageNumber)
         {
-            if (searchString != null)
+            try
             {
-                pageNumber = 1;
+                if (searchString != null)
+                {
+                    pageNumber = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+
+                ViewData["CurrentFilter"] = searchString;
+
+                var query = _context.Order
+                    .Select(order => new OrderInfor
+                    {
+                        Id = order.Id,
+                        CustomerId = order.CustomerId,
+                        CustomerName = _context.Customer
+                            .Where(c => c.IdUser == order.CustomerId)
+                            .Select(c => c.Name)
+                            .FirstOrDefault()!,
+                        OrderDate = order.OrderDate,
+                        Status = order.Status
+                    });
+
+                if (!String.IsNullOrEmpty(searchString))
+                {
+                    query = query.Where(s => s.Status.Contains(searchString));
+                }
+
+                int pageSize = 5;
+                return View(await PaginatedList<OrderInfor>.CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize));
             }
-            else
+            catch (Exception)
             {
-                searchString = currentFilter;
+                return View();
             }
 
-            ViewData["CurrentFilter"] = searchString;
-            var sqlServerDbContext = from s in _context.Order
-                                     select s;
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                sqlServerDbContext = sqlServerDbContext.Where(s => s.Status.Contains(searchString));
-            }
-
-            int pageSize = 5;
-            return View(await PaginatedList<Order>.CreateAsync(sqlServerDbContext.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
+
         public bool Delete(int id)
         {
             try
@@ -222,14 +243,66 @@ namespace ManageCoffee.Controllers
             }
         }
 
+        [HttpGet]
         public IActionResult DetailOrder(int id)
         {
             var orderDetail = _context.Order.Find(id);
             orderDetail = _context.Order
             .Include(o => o.OrderItem)
             .FirstOrDefault(o => o.Id == id);
-        
-            return View(orderDetail);          
+
+            if (orderDetail != null)
+            {
+                var customerId = orderDetail.CustomerId;
+                var customerName = GetCustomerNameById(customerId);
+
+                ViewData["CustomerName"] = customerName;
+
+                return View(orderDetail);
+            }
+
+            return NotFound();
+        }
+
+        [HttpPost]
+        public IActionResult DetailOrder(int id, OrderInfor model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var orderDetail = _context.Order.Find(id);
+            orderDetail = _context.Order
+            .Include(o => o.OrderItem)
+            .FirstOrDefault(o => o.Id == id);
+
+            if (orderDetail != null)
+            {
+                orderDetail.Status = model.Status;
+
+                _context.SaveChanges();
+
+                return RedirectToAction("DetailOrder", new { id = orderDetail.Id });
+            }
+
+            return NotFound();
+        }
+
+
+        private string GetCustomerNameById(int? customerId)
+        {
+            if (customerId.HasValue)
+            {
+                var customerName = _context.Customer
+                    .Where(c => c.IdUser == customerId)
+                    .Select(c => c.Name)
+                    .FirstOrDefault();
+
+                return customerName ?? "N/A";
+            }
+
+            return "N/A";
         }
 
     }

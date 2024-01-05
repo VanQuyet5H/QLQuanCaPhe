@@ -10,7 +10,8 @@ namespace ManageCoffee.ViewModels
         public DateTime OrderDate { get; set; }
         public string QrCode { get; set; } = string.Empty;
         public string Status { get; set; }
+        public string CustomerName { get; set; }
 
-        public List<OrderItem> OrderItems { get; set; }
+        public List<OrderItem> OrderItem { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿﻿@Model ManageCoffee.Models.Order
+﻿﻿@Model ManageCoffee.ViewModels.OrderInfor
 @{
     ViewData["Title"] = "Danh sách Order";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -34,31 +34,16 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                @if (TempData["EditUserMessage"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        </button> <h5><i class="icon fas fa-check"></i> @TempData["EditUserMessage"]</h5>
-                    </div>
-                }
-                @if (TempData["DeleteUserMessage"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        </button> <h5><i class="icon fas fa-check"></i> @TempData["DeleteUserMessage"]</h5>
-                    </div>
-                }
+               
                 <table class="table table-hover table-striped table-head-bg-primary" style="text-align:center;">
                     <thead class="table-head-bg-primary">
                         <tr>
+                            
                             <th>
-                                STT
+                                Mã Đơn hàng
                             </th>
                             <th>
-                                ID
-                            </th>
-                            <th>
-                                ID Customer
+                                Tên khách hàng
                             </th>
                             <th>
                                 Ngày Order
@@ -85,13 +70,12 @@
                             {
 
                                 <tr>
-                                    <td>
-                                    </td>
+                                   
                                     <td>
                                         @item.Id
                                     </td>
                                     <td>
-                                        @item.CustomerId
+                                        @item.CustomerName
                                     </td>
                                     <td>
                                         @item.OrderDate
