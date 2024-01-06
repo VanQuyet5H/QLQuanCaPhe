@@ -1,0 +1,88 @@
+﻿@model ManageCoffee.ViewModels.SalesChartViewModel
+@{
+    ViewData["Title"] = "Sales Statistics";
+}
+@section scripts
+    {
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        var staticData = {
+            Labels: @Html.Raw(Json.Serialize(Model.ChartLabels)),
+            Data: @Html.Raw(Json.Serialize(Model.ChartData))
+                };
+        if (staticData) {
+            var ctx = document.getElementById('myPieChart').getContext('2d');
+            var myPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: staticData.Labels,
+                    datasets: [{
+                        data: staticData.Data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    title: {
+                        display: true,
+                        text: 'Top Selling Products'
+                    }
+                }
+            });
+        } else {
+            console.error("No chart data available.");
+        }
+    </script>
+    }
+<div class="content">
+    <h1>Biểu đồ Sản Phẩm Coffee Bán Chạy Trong Tháng Gần Nhất</h1>
+
+    <div>
+        <canvas id="myPieChart" width="400" height="200"></canvas>
+
+    </div>
+
+
+    <!-- Hiển thị danh sách chi tiết sản phẩm bán chạy -->
+    <h3>Chi Tiết Sản Phẩm Bán Chạy</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Coffee Name</th>
+                <th>Quantity</th>
+                <th>Order Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (ViewBag.ProductDetails != null)
+            {
+                @foreach (var detail in ViewBag.ProductDetails)
+                {
+                    <tr>
+                        <td>@detail.CoffeeName</td>
+                        <td>@detail.Quantity</td>
+                        <td>@detail.OrderDate.ToShortDateString()</td>
+                    </tr>
+                }
+
+            }
+            else
+            {
+                <tr>Không có dữ liệu</tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -218,7 +218,7 @@ namespace ManageCoffee.Controllers
             foreach (var insurance in insuranceCertificate)
             {
                 dt.Rows.Add(insurance.Id, insurance.Name, insurance.Image, insurance.Price, insurance.Quantity,
-                     insurance.Type,insurance.InStock, insurance.Quantity * insurance.Price);
+                     insurance.Type,insurance.InStock ? "Còn hàng" : "Hết hàng", insurance.Quantity * insurance.Price);
             }
 
             using (XLWorkbook wb = new XLWorkbook()) //Install ClosedXml from Nuget for XLWorkbook  
