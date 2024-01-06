@@ -6,6 +6,7 @@ using ManageCoffee.Other;
 using ManageCoffee.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -35,32 +36,36 @@ namespace ManageCoffee.Controllers
         [HttpPost]
         public async Task<IActionResult> DangNhap(string username, string password)
         {
-
-            var user = _context.User.FirstOrDefault(u => u.Username == username);
-
-            if (user != null && user.Password == password)
+            if (ModelState.IsValid)
             {
-                var claims = new List<Claim>
+                var f_password = GetMD5(password);
+                var user = _context.User.FirstOrDefault(u => u.Username == username);
+                //var data = _context.User.Where(s => s.Username.Equals(username) && s.Password.Equals(f_password)).ToList();
+                if (user != null && user.Password == f_password)
                 {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Role, user.Role),
-                    new Claim("IDcustomer", user.Id.ToString()),
-                };
-                HttpContext.Session.SetString("SessionUser", user?.Username ?? "");
-                var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity)
-                );
-
-                _notyfService.Success("Đăng nhập thành công");
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                _notyfService.Error("Vui lòng kiểm tra lại thông tin");
-          
+                    // Set the user as logged in
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name,user.Username),
+                        new Claim(ClaimTypes.Role, user.Role),
+                        new Claim("IDcustomer", user.Id.ToString()),
+                    };
+                    HttpContext.Session.SetString("SessionUser", user?.Username ?? "");
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity)
+                      );
+                    //Thông báo
+                    TempData["SuccessMessage"] = "Đăng nhập thành công!";
+                    // Redirect to the home page
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ViewData["ErrorMessage"] = "Vui lòng kiểm tra lại thông tin!";
+                }
             }
             return RedirectToAction("DangNhap");
         }
@@ -90,12 +95,13 @@ namespace ManageCoffee.Controllers
                     ModelState.AddModelError("Username", "Username đã tồn tại");
                     return View("DangKy", user);
                 }
+                userCreate.Password = GetMD5(userCreate.Password);
                 _context.User.Add(userCreate);                
                 _context.SaveChanges();
 
                 var userDetail = new Customer
                 {
-                    IdUser = userCreate.Id,
+                    UserId = userCreate.Id,
                     Name = user.Name,
                 };
                 _context.Customer.Add(userDetail);
@@ -110,6 +116,7 @@ namespace ManageCoffee.Controllers
        
             return View("DangKy", user);
         }
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DanhSachAccount(string searchString, string currentFilter, int? pageNumber)
         {
             ViewBag.SessionUser = HttpContext.Session.GetString("SessionUser");

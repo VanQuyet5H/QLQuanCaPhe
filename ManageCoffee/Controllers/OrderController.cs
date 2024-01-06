@@ -180,7 +180,7 @@ namespace ManageCoffee.Controllers
                         Id = order.Id,
                         CustomerId = order.CustomerId,
                         CustomerName = _context.Customer
-                            .Where(c => c.IdUser == order.CustomerId)
+                            .Where(c => c.UserId == order.CustomerId)
                             .Select(c => c.Name)
                             .FirstOrDefault()!,
                         OrderDate = order.OrderDate,
@@ -295,7 +295,7 @@ namespace ManageCoffee.Controllers
             if (customerId.HasValue)
             {
                 var customerName = _context.Customer
-                    .Where(c => c.IdUser == customerId)
+                    .Where(c => c.UserId == customerId)
                     .Select(c => c.Name)
                     .FirstOrDefault();
 
