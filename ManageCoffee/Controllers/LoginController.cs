@@ -34,7 +34,7 @@ namespace ManageCoffee.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> DangNhap(string username, string password)
+        public  IActionResult DangNhap(string username, string password)
         {
             if (ModelState.IsValid)
             {
@@ -71,12 +71,15 @@ namespace ManageCoffee.Controllers
         }
         public IActionResult Logout()
         {
-            // Clear the user from the session
-            HttpContext.Session.Remove("User");
+			HttpContext.Session.Remove("SessionUser");
 
-            // Redirect to the login page
-            return RedirectToAction("DangNhap", "Login");
-        }
+			// Clear the user cookie
+			Response.Cookies.Delete(CookieAuthenticationDefaults.AuthenticationScheme);
+
+			// Redirect to the login page
+			return RedirectToAction("DangNhap", "Login");
+		}
+
         [HttpGet]
         public IActionResult DangKy()
         {
