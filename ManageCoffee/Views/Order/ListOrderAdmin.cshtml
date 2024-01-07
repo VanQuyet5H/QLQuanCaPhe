@@ -85,7 +85,6 @@
                                     </td>
 
                                     <td>
-                                        @* <a class="btn btn-success" style="text-decoration:none; " href="/Admin/VaccineData/Edit/@item.Id"><i class="fa fa-edit"></i> Sửa</a> *@
                                         <a style="text-decoration: none;" href="@Url.Action("DeleteOrder", "Order", new { id = item.Id })" class="btn btn-danger" onclick="return confirm('Xác nhận xoá?')"><i class="fas fa-trash"></i> Xoá</a>
                                         <a class="btn btn-info" style="text-decoration:none; " href="@Url.Action("DetailOrder", "Order", new { id = item.Id })"><i class="bi bi-info-circle"></i> Chi tiết</a>
                                     </td>

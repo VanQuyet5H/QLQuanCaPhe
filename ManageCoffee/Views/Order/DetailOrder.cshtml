@@ -1,27 +1,47 @@
 ﻿﻿@Model ManageCoffee.Models.Order
+@model ManageCoffee.Models.Order
 
-<h2>Order Details</h2>
-<p>Order ID: @Model.Id</p>
-<p>Customer ID: @ViewData["CustomerName"]</p>
-<p>Order Date: @Model.OrderDate</p>
-<p>Status: @Model.Status</p>
-
-<h3>Order Items</h3>
 @{
-    decimal totalAmount = 0; 
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<div class="content">
+    <div class="card mb-12">
+        <h2>Chi tiết đơn hàng</h2>
+        <p>Mã đơn hàng: @Model.Id</p>
+        <p>Tên khách hàng: @ViewData["CustomerName"]</p>
+        <p>Ngày order: @Model.OrderDate</p>
+        <form method="post" asp-action="EditOrder" asp-route-id="@Model.Id">           
+            <div class="form-group">
+                <label>Status:</label>
+                <select asp-for="Status" style="width:270px;height:46px;margin-bottom:30px;">
+                    <option value="Đang chờ xử lý">Đang chờ xử lý</option>
+                    <option value="Hoàn thành">Hoàn thành</option>
+                    <option value="Đã huỷ">Đã huỷ</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Order</button>
+        </form>
 
-<ul>
-    @foreach (var orderItem in Model.OrderItem)
-    {
-        <li>
-            Mã Coffee: @orderItem.CoffeeId -
-            Số lượng: @orderItem.Quantity -
-            Thành tiền: @orderItem.Price.ToString("n0") VNĐ
-        </li>
-        totalAmount += orderItem.Price;
-    }
-</ul>
-<p>Tổng giá trị: @totalAmount.ToString("n0") VNĐ</p>
+        <h3>Sản phẩm được order:</h3>
+        @{
+            decimal totalAmount = 0;
+        }
 
-<a class="btn btn-info" style="text-decoration:none; " href="/Order/ListOrderAdmin"><i class="bi bi-info-circle"></i> Quay lại</a>
+        <ul>
+            @foreach (var orderItem in Model.OrderItem)
+            {
+                <li>
+                    Mã Coffee: @orderItem.CoffeeId -
+                    Số lượng: @orderItem.Quantity -
+                    Thành tiền: @orderItem.Price.ToString("n0") VNĐ
+                </li>
+                totalAmount += orderItem.Price;
+            }
+        </ul>
+        <p>Tổng giá trị: @totalAmount.ToString("n0") VNĐ</p>
+        <div>
+            <a class="btn btn-info" style="text-decoration:none; " href="/Order/ListOrderAdmin"><i class="bi bi-info-circle"></i> Quay lại</a>
+        </div>
+        
+    </div>
+</div>

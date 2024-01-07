@@ -33,7 +33,7 @@ namespace ManageCoffee.Controllers
             string? jsoncart = session.GetString(CARTKEY);
             if (jsoncart != null)
             {
-                return JsonConvert.DeserializeObject<List<CartItem>>(jsoncart);
+                return JsonConvert.DeserializeObject<List<CartItem>>(jsoncart)!;
             }
             return new List<CartItem>();
         }
@@ -221,6 +221,7 @@ namespace ManageCoffee.Controllers
                 throw new Exception("Đã có lỗi xảy ra, vui lòng thử lại sau", ex);
             }
         }
+        [Authorize]
         public IActionResult DeleteOrder(int id)
         {
             try
@@ -243,6 +244,7 @@ namespace ManageCoffee.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult DetailOrder(int id)
         {
@@ -264,18 +266,12 @@ namespace ManageCoffee.Controllers
             return NotFound();
         }
 
+        [Authorize]
         [HttpPost]
-        public IActionResult DetailOrder(int id, OrderInfor model)
+        public IActionResult EditOrder(int id, OrderInfor model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
 
             var orderDetail = _context.Order.Find(id);
-            orderDetail = _context.Order
-            .Include(o => o.OrderItem)
-            .FirstOrDefault(o => o.Id == id);
 
             if (orderDetail != null)
             {
@@ -283,12 +279,11 @@ namespace ManageCoffee.Controllers
 
                 _context.SaveChanges();
 
-                return RedirectToAction("DetailOrder", new { id = orderDetail.Id });
+                return RedirectToAction("ListOrderAdmin");
             }
 
             return NotFound();
         }
-
 
         private string GetCustomerNameById(int? customerId)
         {
