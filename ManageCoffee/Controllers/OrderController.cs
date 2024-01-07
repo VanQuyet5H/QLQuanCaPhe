@@ -110,8 +110,8 @@ namespace ManageCoffee.Controllers
             return RedirectToAction(nameof(Cart));
         }
 
-        [Route("/checkout")]
-        [Authorize]
+		[Authorize]
+		[Route("/checkout")]
         public IActionResult Checkout()
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "IDcustomer");
@@ -126,7 +126,7 @@ namespace ManageCoffee.Controllers
                 {
                     CustomerId = IDcustomer,
                     OrderDate = DateTime.Now,
-                    Status = "Pending",
+                    Status = "Đang chờ xử lý",
                 };
                 _context.Order.Add(orderDetail);
                 _context.SaveChanges();
@@ -157,8 +157,8 @@ namespace ManageCoffee.Controllers
         {
             return View(cartItems);
         }
-
-        [HttpGet]
+		[Authorize(Roles = "Admin")]
+		[HttpGet]
         public async Task<IActionResult> ListOrderAdmin(string searchString, string currentFilter, int? pageNumber)
         {
             try
@@ -221,8 +221,8 @@ namespace ManageCoffee.Controllers
                 throw new Exception("Đã có lỗi xảy ra, vui lòng thử lại sau", ex);
             }
         }
-        [Authorize]
-        public IActionResult DeleteOrder(int id)
+		[Authorize(Roles = "Admin")]
+		public IActionResult DeleteOrder(int id)
         {
             try
             {
@@ -244,8 +244,8 @@ namespace ManageCoffee.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet]
+		[Authorize(Roles = "Admin")]
+		[HttpGet]
         public IActionResult DetailOrder(int id)
         {
             var orderDetail = _context.Order.Find(id);
@@ -266,8 +266,8 @@ namespace ManageCoffee.Controllers
             return NotFound();
         }
 
-        [Authorize]
-        [HttpPost]
+		[Authorize(Roles = "Admin")]
+		[HttpPost]
         public IActionResult EditOrder(int id, OrderInfor model)
         {
 
@@ -300,5 +300,53 @@ namespace ManageCoffee.Controllers
             return "N/A";
         }
 
+		[Authorize]
+		[HttpGet]
+        public async Task<IActionResult> ListOrderUser(string searchString, string currentFilter, int? pageNumber)
+        {
+            try
+            {
+                if (searchString != null)
+                {
+                    pageNumber = 1;
+                }
+                else
+                {
+                    searchString = currentFilter;
+                }
+
+                ViewData["CurrentFilter"] = searchString;
+
+				var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "IDcustomer");
+				int IDcustomer = Convert.ToInt32(userIdClaim?.Value);
+
+				var query = _context.Order
+					.Where(order => order.CustomerId == IDcustomer) 
+					.Select(order => new OrderInfor
+					{
+						Id = order.Id,
+						CustomerId = IDcustomer,
+						CustomerName = _context.Customer
+							.Where(c => c.UserId == order.CustomerId)
+							.Select(c => c.Name)
+							.FirstOrDefault()!,
+						OrderDate = order.OrderDate,
+						Status = order.Status
+					});
+
+				if (!String.IsNullOrEmpty(searchString))
+                {
+                    query = query.Where(s => s.Status.Contains(searchString));
+                }
+
+                int pageSize = 5;
+                return View(await PaginatedList<OrderInfor>.CreateAsync(query.AsNoTracking(), pageNumber ?? 1, pageSize));
+            }
+            catch (Exception)
+            {
+                return View();
+            }
+
+        }
     }
 }
