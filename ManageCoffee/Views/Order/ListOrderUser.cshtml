@@ -34,11 +34,11 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-               
+
                 <table class="table table-hover table-striped table-head-bg-primary" style="text-align:center;">
                     <thead class="table-head-bg-primary">
                         <tr>
-                            
+
                             <th>
                                 Mã Đơn hàng
                             </th>
@@ -51,9 +51,7 @@
                             <th>
                                 Trạng thái
                             </th>
-                            <th>
-                                Thao tác
-                            </th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -70,7 +68,7 @@
                             {
 
                                 <tr>
-                                   
+
                                     <td>
                                         @item.Id
                                     </td>
@@ -84,10 +82,6 @@
                                         @item.Status
                                     </td>
 
-                                    <td>
-                                        <a style="text-decoration: none;" href="@Url.Action("DeleteOrder", "Order", new { id = item.Id })" class="btn btn-danger" onclick="return confirm('Xác nhận xoá?')"><i class="fas fa-trash"></i> Xoá</a>
-                                        <a class="btn btn-info" style="text-decoration:none; " href="@Url.Action("DetailOrder", "Order", new { id = item.Id })"><i class="bi bi-info-circle"></i> Chi tiết</a>
-                                    </td>
                                 </tr>
                             }
                         }
